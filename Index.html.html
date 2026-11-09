@@ -1,0 +1,1302 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ריצה עד הגיוס</title>
+<meta name="theme-color" content="#0A1020">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="עד הגיוס">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800&family=IBM+Plex+Mono:wght@500;600&family=Secular+One&display=swap" rel="stylesheet">
+<style>
+/* Layout: phone-first column. Hero countdown with track-lane motif, week strip, readiness check-in, colour-coded session cards, fixed bottom tab bar. */
+:root{
+  --bg:#0A1020; --bg2:#0E1630; --surface:#131C36; --surface2:#1B2748; --fg:#EEF2FF; --muted:#8E9BC0; --line:#27355F;
+  --accent:#FFB627; --accent-ink:#1A1200; --accent-text:#FFB627;
+  --q:#FF5C8A; --e:#3FD7B5; --l:#5E9BFF; --s:#A98CFF; --y:#E58BD8;
+  --ok:#47D98A; --warn:#FFB627; --bad:#FF5A5F;
+  --font-display:'Secular One','Heebo',system-ui,sans-serif;
+  --font-body:'Heebo',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --font-data:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){
+  --bg:#EEF1FA; --bg2:#E4E9F7; --surface:#FFFFFF; --surface2:#E6EBF8; --fg:#0D1530; --muted:#556088; --line:#D3DAEE;
+  --accent-text:#A85F00;
+  --q:#D4235F; --e:#0C8F78; --l:#2B67DC; --s:#7650DD; --y:#B0309F;
+  --ok:#13823F; --warn:#A85F00; --bad:#C8303A; color-scheme:light;
+  --theme:#EEF1FA}}
+:root[data-theme="light"]{
+  --bg:#EEF1FA; --bg2:#E4E9F7; --surface:#FFFFFF; --surface2:#E6EBF8; --fg:#0D1530; --muted:#556088; --line:#D3DAEE;
+  --accent-text:#A85F00;
+  --q:#D4235F; --e:#0C8F78; --l:#2B67DC; --s:#7650DD; --y:#B0309F;
+  --ok:#13823F; --warn:#A85F00; --bad:#C8303A; color-scheme:light;
+  --theme:#EEF1FA}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%;background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:15px;line-height:1.5;touch-action:manipulation}
+#app{max-width:640px;margin:0 auto;padding-top:calc(env(safe-area-inset-top,0px) + 14px);padding-bottom:calc(96px + env(safe-area-inset-bottom,0px));padding-left:max(14px,env(safe-area-inset-left,0px));padding-right:max(14px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--font-display);font-weight:400;margin:0;text-wrap:balance}
+h2{font-size:1.35rem} h3{font-size:1.15rem;line-height:1.2}
+.mono{font-family:var(--font-data);font-variant-numeric:tabular-nums}
+.mono,.exs,.pill,.stats b,.hstats b,.sl output,.zmeta .mono,.ld input{direction:ltr;unicode-bidi:isolate}
+.muted{color:var(--muted)} .small{font-size:.8125rem}
+.stack{display:flex;flex-direction:column;gap:12px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.between{justify-content:space-between}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* hero */
+.hero{position:relative;overflow:hidden;border-radius:20px;padding:18px 18px 46px;background:linear-gradient(140deg,var(--surface2),var(--surface) 75%);border:1px solid var(--line);min-height:150px}
+.lanes{position:absolute;inset-inline-end:-60px;bottom:-130px;width:290px;height:170px;pointer-events:none}
+.lanes i{position:absolute;border-radius:999px;border:3px solid;opacity:.38}
+.lanes i:nth-child(1){inset:0;border-color:var(--q)}
+.lanes i:nth-child(2){inset:15px;border-color:var(--l)}
+.lanes i:nth-child(3){inset:30px;border-color:var(--e)}
+.lanes i:nth-child(4){inset:45px;border-color:var(--s)}
+.hero-in{position:relative;display:grid;gap:2px}
+.eyebrow{font-size:.8125rem;letter-spacing:.04em;color:var(--muted)}
+.big{font-family:var(--font-display);font-size:5.4rem;line-height:.95;color:var(--accent-text)}
+.big small{font-size:1.25rem;color:var(--fg);margin-inline-start:8px}
+.hstats{display:flex;gap:18px;margin-top:8px;flex-wrap:wrap}
+.hstats div{display:grid}
+.hstats b{font-family:var(--font-data);font-size:1.15rem;font-weight:600}
+.hstats span{font-size:.75rem;color:var(--muted)}
+
+/* week strip */
+.wknav{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:16px 0 8px}
+.wknav button{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center}
+.wknav button:disabled{opacity:.35}
+.wknav div{text-align:center;font-weight:700}
+.wknav small{display:block;font-weight:400;color:var(--muted);font-size:.75rem}
+.strip{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.dchip{border:1px solid var(--line);background:var(--surface);border-radius:14px;padding:8px 0 7px;display:grid;justify-items:center;gap:3px;min-width:0}
+.dchip .wl{font-size:.7rem;color:var(--muted)}
+.dchip .dn{font-family:var(--font-data);font-weight:600;font-size:1.05rem}
+.dchip .dots{display:flex;gap:3px;height:8px}
+.dchip .dots i{width:8px;height:8px;border-radius:50%;border:2px solid var(--c);background:transparent}
+.dchip .dots i.on{background:var(--c)}
+.dchip.sel{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.dchip.sel .wl{color:var(--accent-ink);opacity:.75}
+.dchip.sel .dots i{border-color:var(--accent-ink)}
+.dchip.sel .dots i.on{background:var(--accent-ink)}
+.dchip.today{box-shadow:0 0 0 2px var(--fg) inset}
+.dchip.off{opacity:.55}
+
+/* cards */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px}
+.dtitle{margin:18px 0 10px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.banner{border-radius:14px;padding:11px 13px;background:color-mix(in srgb,var(--warn) 14%,var(--surface));border:1px solid color-mix(in srgb,var(--warn) 50%,var(--line));font-size:.875rem}
+.banner.info{background:color-mix(in srgb,var(--l) 14%,var(--surface));border-color:color-mix(in srgb,var(--l) 50%,var(--line))}
+.banner.bad{background:color-mix(in srgb,var(--bad) 14%,var(--surface));border-color:color-mix(in srgb,var(--bad) 55%,var(--line))}
+.btn{border:0;border-radius:12px;padding:10px 16px;background:var(--accent);color:var(--accent-ink);font-weight:800;min-height:42px}
+
+/* check-in */
+.ci-head{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center;margin-bottom:6px}
+.ring{width:104px;height:104px;position:relative}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring .n{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--font-display);font-size:2.1rem}
+.z-green{--zc:var(--ok)} .z-yellow{--zc:var(--warn)} .z-red{--zc:var(--bad)}
+.zlabel{font-family:var(--font-display);font-size:1.15rem;color:var(--zc)}
+.sliders{display:grid;gap:14px;margin-top:8px}
+.sl label{display:flex;justify-content:space-between;align-items:baseline;font-weight:500;margin-bottom:2px}
+.sl output{font-family:var(--font-data);font-weight:600;color:var(--accent-text)}
+.sl input[type=range]{direction:ltr;-webkit-appearance:none;appearance:none;width:100%;height:30px;background:transparent;margin:0}
+.sl input[type=range]::-webkit-slider-runnable-track{height:10px;border-radius:6px;background:linear-gradient(to right,var(--accent) var(--pct,50%),var(--surface2) var(--pct,50%))}
+.sl input[type=range]::-moz-range-track{height:10px;border-radius:6px;background:var(--surface2)}
+.sl input[type=range]::-moz-range-progress{height:10px;border-radius:6px;background:var(--accent)}
+.sl input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;border-radius:50%;background:var(--fg);border:4px solid var(--accent);margin-top:-9px;box-shadow:0 2px 8px #0006}
+.sl input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--fg);border:4px solid var(--accent)}
+.sl .ends{display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted);direction:ltr}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:var(--surface2);border-radius:999px;padding:7px 13px;font-size:.8125rem;min-height:36px}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:800}
+
+/* session */
+.sess{--c:var(--accent);background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow:hidden}
+.sess.q{--c:var(--q)} .sess.e{--c:var(--e)} .sess.l{--c:var(--l)} .sess.s{--c:var(--s)} .sess.y{--c:var(--y)}
+.sh{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:14px 16px;background:linear-gradient(100deg,color-mix(in srgb,var(--c) 26%,var(--surface)),color-mix(in srgb,var(--c) 6%,var(--surface)))}
+.ico{width:44px;height:44px;border-radius:14px;background:var(--c);color:#0A1020;display:grid;place-items:center}
+.ico svg{width:24px;height:24px}
+.tag{font-size:.75rem;font-weight:800;letter-spacing:.05em;color:var(--c)}
+.when{font-size:.75rem;color:var(--muted)}
+.sb{padding:14px 16px 16px;display:grid;gap:12px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stats.s4{grid-template-columns:repeat(4,1fr);gap:6px}
+.stats.s4 b{font-size:.8rem;white-space:nowrap;letter-spacing:-.02em}
+.stats div{background:var(--surface2);border-radius:12px;padding:9px 6px;text-align:center;min-width:0}
+.stats b{display:block;font-family:var(--font-data);font-weight:600;font-size:1rem;color:var(--fg)}
+.stats span{font-size:.7rem;color:var(--muted)}
+.adapt{background:color-mix(in srgb,var(--zc) 14%,var(--surface));border:1px solid color-mix(in srgb,var(--zc) 55%,var(--line));border-radius:12px;padding:9px 12px;font-size:.8125rem}
+.adapt b{color:var(--zc)}
+.steps{margin:0;padding:0;list-style:none;display:grid;gap:6px}
+.steps li{display:grid;grid-template-columns:20px 1fr;gap:8px;align-items:start;font-size:.9rem}
+.steps li::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--c);margin-top:7px}
+.viz{width:100%;height:auto;display:block;direction:ltr}
+.done{display:flex;align-items:center;gap:10px;font-size:.875rem;color:var(--muted);padding-top:4px}
+.done input{width:22px;height:22px;accent-color:var(--c)}
+.struck{opacity:.5;text-decoration:line-through}
+.prog{font-size:.8125rem;color:var(--muted);border-inline-start:3px solid var(--c);padding-inline-start:10px}
+.ex{border-top:1px solid var(--line);padding-top:10px;display:grid;gap:6px}
+.ex:first-of-type{border-top:0;padding-top:0}
+.exh{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.exn{font-weight:700}
+.exn em{font-style:normal;font-size:.65rem;font-weight:800;background:var(--surface2);color:var(--c);border-radius:6px;padding:1px 6px;margin-inline-start:6px}
+.exs.yt{direction:rtl;unicode-bidi:isolate;font-size:.9rem}
+.exs{font-family:var(--font-data);font-weight:600;color:var(--c);white-space:nowrap;font-size:1.02rem}
+.exm{display:flex;gap:6px;flex-wrap:wrap}
+.pill.rest{border-color:var(--c);background:color-mix(in srgb,var(--c) 16%,var(--surface2));font-weight:600}
+.pill{font-family:var(--font-data);font-size:.72rem;border:1px solid var(--line);background:var(--surface2);border-radius:8px;padding:2px 8px}
+.cue{font-size:.8125rem;color:var(--muted)}
+.ld{display:flex;align-items:center;gap:8px;font-size:.8125rem;color:var(--muted)}
+.ld input{width:5.5rem;font-size:16px;font-family:var(--font-data);background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:6px 10px;min-height:38px;color:var(--fg)}
+.ld .hint{font-size:.75rem}
+
+/* tables, charts */
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.8125rem}
+th,td{padding:9px 6px;text-align:start;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.bars{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;align-items:end;height:170px;position:relative;padding-top:10px}
+.bar{display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;gap:5px;position:relative;z-index:1}
+.bar i{display:block;width:100%;background:linear-gradient(to top,var(--l),var(--e));border-radius:8px 8px 3px 3px;opacity:.7}
+.bar.cur i{opacity:1}
+.bar span{font-family:var(--font-data);font-weight:600}
+.cap{position:absolute;inset-inline:0;border-top:2px dashed var(--bad);z-index:0;opacity:.8}
+.cap em{position:absolute;inset-inline-end:0;top:-1.45em;font-style:normal;font-size:.7rem;color:var(--bad)}
+.blabels{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;text-align:center;font-size:.75rem;color:var(--muted);margin-top:6px}
+.zrow{display:grid;grid-template-columns:2.2rem 1fr;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.zrow:last-child{border-bottom:0}
+.zb{width:2.2rem;height:2.2rem;border-radius:10px;display:grid;place-items:center;font-family:var(--font-data);font-weight:600;color:#0A1020;background:var(--zcol)}
+.zt{position:relative;height:8px;border-radius:4px;background:var(--surface2);margin:6px 0 4px;direction:ltr}
+.zt i{position:absolute;top:0;bottom:0;border-radius:4px;background:var(--zcol)}
+.zmeta{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.field{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.field input[type=number]{width:6rem;font-size:16px;font-family:var(--font-data);background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:6px 10px;min-height:42px;color:var(--fg)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+.kpis div{background:var(--surface2);border-radius:14px;padding:12px}
+.kpis b{display:block;font-family:var(--font-display);font-weight:400;font-size:1.5rem}
+.kpis span{font-size:.75rem;color:var(--muted)}
+.wrow{display:grid;gap:3px;padding:12px 0;border-bottom:1px solid var(--line)}
+.wrow:last-child{border-bottom:0}
+.wrow b{font-family:var(--font-display);font-weight:400}
+
+.why,.log{border:1px solid var(--line);border-radius:12px;background:var(--bg2)}
+.why summary,.log summary{list-style:none;cursor:pointer;padding:11px 12px;font-weight:700;font-size:.875rem;display:flex;justify-content:space-between;align-items:center;color:var(--c)}
+.why summary::-webkit-details-marker,.log summary::-webkit-details-marker{display:none}
+.why summary::after,.log summary::after{content:"+";font-family:var(--font-data);font-size:1.15rem}
+.why[open] summary::after,.log[open] summary::after{content:"\2212"}
+.why p{margin:0;padding:0 12px 12px;font-size:.875rem}
+.lg{padding:0 12px 12px;display:grid;gap:10px}
+.lgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.lgrid label{display:grid;gap:3px;font-size:.75rem;color:var(--muted)}
+.lgrid input{width:100%;font-size:16px;font-family:var(--font-data);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 10px;min-height:42px;color:var(--fg);direction:ltr;text-align:start}
+.an{border-radius:12px;padding:10px 12px;font-size:.875rem;background:color-mix(in srgb,var(--c) 10%,var(--surface));border:1px solid color-mix(in srgb,var(--c) 40%,var(--line));display:grid;gap:6px}
+.an b{color:var(--c)}
+.an ul{margin:0;padding-inline-start:18px;display:grid;gap:4px}
+
+/* moves, sheet, coach, history */
+.mvnote{font-size:.8rem;color:var(--muted);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.lnk{background:none;border:0;color:var(--accent-text);font-weight:700;text-decoration:underline;padding:0;min-height:0}
+#sheet{position:fixed;inset:0;z-index:50;display:flex;align-items:flex-end;justify-content:center;background:#000a}
+#sheet[hidden]{display:none}
+.sheetc{background:var(--surface);border:1px solid var(--line);border-radius:22px 22px 0 0;width:100%;max-width:640px;max-height:90vh;overflow:auto;padding:16px 16px calc(22px + env(safe-area-inset-bottom,0px));display:grid;gap:12px;align-content:start}
+.sheetc h3{font-size:1.2rem}
+.dayrow{display:grid;grid-template-columns:3.2rem 1fr;gap:10px;align-items:center;width:100%;text-align:start;border:1px solid var(--line);background:var(--surface2);border-radius:14px;padding:10px 12px;min-height:52px}
+.dayrow[disabled]{opacity:.38}
+.dayrow .dd{font-family:var(--font-data);font-weight:600;text-align:center;line-height:1.1}
+.dayrow .dd small{display:block;font-family:var(--font-body);font-weight:400;color:var(--muted);font-size:.7rem}
+.dayrow .dc{font-size:.85rem}
+.dayrow .dc em{font-style:normal;color:var(--muted);font-size:.75rem;display:block}
+.dayrow.cur{border-color:var(--accent)}
+.optb{width:100%;text-align:start;border:1px solid var(--line);background:var(--surface2);border-radius:14px;padding:12px;font-weight:600;min-height:48px}
+.optb[disabled]{opacity:.4}
+.wl{display:grid;gap:6px}
+.wl li{font-size:.85rem}
+#toast{position:fixed;bottom:calc(86px + env(safe-area-inset-bottom,0px));left:0;right:0;margin:auto;width:max-content;max-width:90%;background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:12px;z-index:60;font-weight:700;font-size:.875rem}
+#toast[hidden]{display:none}
+.coach{--tc:var(--ok);border-radius:14px;padding:12px 14px;background:color-mix(in srgb,var(--tc) 9%,var(--surface));border:1px solid color-mix(in srgb,var(--tc) 45%,var(--line));display:grid;gap:9px;font-size:.9rem;line-height:1.55}
+.coach.tone-ok{--tc:var(--l)} .coach.tone-warn{--tc:var(--warn)} .coach.tone-bad{--tc:var(--bad)}
+.coach .chead{display:flex;gap:8px;align-items:center}
+.coach .chead b{font-family:var(--font-display);font-weight:400;font-size:1.05rem;line-height:1.25}
+.coach .cdot{flex:none;width:12px;height:12px;border-radius:50%;background:var(--tc)}
+.coach p{margin:0}
+.coach .cnext{border-top:1px dashed var(--line);padding-top:8px;display:grid;gap:4px}
+.coach .cnext b{color:var(--tc);font-size:.8rem;letter-spacing:.04em}
+.coach .cm{font-size:.72rem;color:var(--muted)}
+.rv{display:flex;gap:5px}.rv .rc{flex:1;min-width:0}
+.rc{background:var(--surface2);border-radius:10px;padding:6px 4px;text-align:center;border-bottom:3px solid var(--ok)}
+.rc.slow{border-color:var(--warn)} .rc.fast{border-color:var(--q)}
+.rc b{font-family:var(--font-data);display:block;direction:ltr;font-size:.95rem}
+.rc span{display:block;font-size:.62rem;color:var(--muted);line-height:1.25;white-space:nowrap}
+.rps{display:grid;gap:6px}
+.rps .rr{display:grid;grid-template-columns:26px 1fr 1fr;gap:8px;align-items:center}
+.rps .rr i{font-style:normal;font-family:var(--font-data);font-weight:600;color:var(--c);text-align:center}
+.rps .rr.rh{font-size:.72rem;color:var(--muted)}
+.rps input{width:100%;font-size:16px;font-family:var(--font-data);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 10px;min-height:40px;color:var(--fg);direction:ltr;text-align:start}
+.lsub{font-size:.75rem;color:var(--muted);font-weight:700}
+.hist{border:1px solid var(--line);border-radius:14px;background:var(--bg2)}
+.hist summary{list-style:none;cursor:pointer;padding:11px 12px;display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center}
+.hist summary::-webkit-details-marker{display:none}
+.hist .hd{width:10px;height:10px;border-radius:50%;background:var(--c)}
+.hist .ht b{display:block;font-size:.92rem}
+.hist .ht span{font-size:.75rem;color:var(--muted)}
+.hist .hs{font-family:var(--font-data);font-size:.78rem;color:var(--muted);direction:ltr;unicode-bidi:isolate}
+.hist .hb{padding:0 12px 12px}
+.dgroup{display:grid;gap:8px}
+.dgroup>h3{font-size:1rem;color:var(--muted)}
+.lastw summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center}
+.lastw summary::-webkit-details-marker{display:none}
+.lastw .cdot{width:12px;height:12px;border-radius:50%;background:var(--tc,var(--ok))}
+.lastw .lt small{display:block;color:var(--muted);font-size:.72rem}
+.lastw .lt b{font-size:.92rem}
+.lastw .lb{margin-top:10px}
+textarea.bk{width:100%;min-height:90px;font-size:13px;font-family:var(--font-data);background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:10px;color:var(--fg);direction:ltr}
+.btn.sec{background:var(--surface2);color:var(--fg);border:1px solid var(--line)}
+.fchips{display:grid;gap:5px}
+/* bottom nav */
+#nav{position:fixed;inset-inline:0;bottom:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);padding:6px max(8px,env(safe-area-inset-left,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-right,0px))}
+#nav button{background:none;border:0;display:grid;justify-items:center;gap:2px;padding:6px 0;color:var(--muted);font-size:.7rem;font-weight:500;border-radius:12px}
+#nav button svg{width:24px;height:24px}
+#nav button[aria-selected="true"]{color:var(--accent-text);font-weight:800}
+svg{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+@media (prefers-reduced-motion:no-preference){
+  .ring circle.v{transition:stroke-dashoffset .4s ease,stroke .25s}
+  .sess{animation:rise .25s ease both}
+  @keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<nav id="nav" aria-label="ניווט"></nav>
+<div id="sheet" hidden></div>
+<div id="toast" hidden></div>
+<script>
+(function(){
+'use strict';
+var ICON='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';
+/* head tags that survive pasting into CodePen (head panel is not part of the pen body) */
+try{
+  var H=document.head, add=function(t,a){var e=document.createElement(t);for(var k in a)e.setAttribute(k,a[k]);H.appendChild(e);};
+  var has=function(s){return H.querySelector(s);};
+  if(!has('link[rel="apple-touch-icon"]'))add('link',{rel:'apple-touch-icon',href:'data:image/png;base64,'+ICON});
+  if(!has('link[rel="icon"]'))add('link',{rel:'icon',href:'data:image/png;base64,'+ICON});
+  [['apple-mobile-web-app-capable','yes'],['mobile-web-app-capable','yes'],['apple-mobile-web-app-status-bar-style','black-translucent'],['apple-mobile-web-app-title','עד הגיוס'],['theme-color','#0A1020']].forEach(function(m){if(!has('meta[name="'+m[0]+'"]'))add('meta',{name:m[0],content:m[1]});});
+  var vp=has('meta[name="viewport"]');
+  if(!vp)add('meta',{name:'viewport',content:'width=device-width,initial-scale=1,viewport-fit=cover'});
+  else if(vp.content.indexOf('viewport-fit')<0)vp.setAttribute('content',vp.content+',viewport-fit=cover');
+  document.title='ריצה עד הגיוס';document.documentElement.lang='he';document.documentElement.dir='rtl';
+}catch(e){}
+
+var START=new Date(2026,10,8,12), END=new Date(2026,11,3,12), DAY=864e5, LAST=25;
+var WD=['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'], WL=['א','ב','ג','ד','ה','ו','ש'];
+var STORE='enlist-plan-v2',BAK='enlist-plan-v2-bak',storeOK=true;
+function key(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function addDays(d,n){var x=new Date(d);x.setDate(x.getDate()+n);return x;}
+function dateOf(o){return addDays(START,o);}
+function offset(d){return Math.round((d-START)/DAY);}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+function def(){return{ci:{},done:{},load:{},log:{},longDay:{},place:{},runs:4,lthr:171,created:Date.now()};}
+var _bc=null,_pc=null;
+function load(){var ks=[STORE,BAK];for(var i=0;i<ks.length;i++){try{var r=JSON.parse(localStorage.getItem(ks[i]));if(r&&typeof r==='object')return Object.assign(def(),r);}catch(e){}}
+  try{if(typeof window.name==='string'&&window.name.indexOf('ENL:')===0){var w=JSON.parse(window.name.slice(4));if(w&&typeof w==='object')return Object.assign(def(),w);}}catch(e){}
+  return def();}
+var inFrame=false;try{inFrame=window.top!==window.self;}catch(e){inFrame=true;}
+var S=load();
+function save(){_bc=null;_pc=null;S.ts=Date.now();try{var j=JSON.stringify(S);localStorage.setItem(STORE,j);localStorage.setItem(BAK,j);storeOK=localStorage.getItem(STORE)===j;}catch(e){storeOK=false;}try{var jn=JSON.stringify(S);if(jn.length<900000)window.name='ENL:'+jn;}catch(e){}idbPut();dbDirty=true;dbSoon(1200);}
+try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist();}catch(e){}
+/* ---------- IndexedDB mirror (second local copy) ---------- */
+var idbT=null;
+function idbOpen(cb){try{var r=indexedDB.open('enlist-plan',1);r.onupgradeneeded=function(){r.result.createObjectStore('kv');};r.onsuccess=function(){cb(r.result);};r.onerror=function(){cb(null);};}catch(e){cb(null);}}
+function idbPut(){clearTimeout(idbT);idbT=setTimeout(function(){idbOpen(function(db){if(!db)return;try{var tx=db.transaction('kv','readwrite');tx.objectStore('kv').put(JSON.stringify(S),'state');tx.oncomplete=function(){db.close();};}catch(e){}});},400);}
+function idbRestore(){idbOpen(function(db){if(!db)return;try{var q=db.transaction('kv','readonly').objectStore('kv').get('state');q.onsuccess=function(){db.close();try{var rem=q.result?JSON.parse(q.result):null;if(rem&&typeof rem==='object'&&(rem.ts||0)>(S.ts||0)){mergeRemote(rem);_bc=null;_pc=null;try{var j=JSON.stringify(S);localStorage.setItem(STORE,j);localStorage.setItem(BAK,j);}catch(e){}render();}}catch(e){}};q.onerror=function(){db.close();};}catch(e){}});}
+/* ---------- cloud sync (artifact db capability; inert elsewhere) ---------- */
+var DBREF=null,dbState='off',dbBusy=false,dbDirty=false,dbT=null,dbAt=0;
+function dbFlush(){
+  if(!DBREF||dbBusy||!dbDirty)return;
+  dbBusy=true;dbDirty=false;
+  var snap=JSON.stringify(S),ts=S.ts||Date.now();
+  DBREF.set({s:snap,ts:ts,v:1}).then(function(){dbBusy=false;dbState='ok';dbAt=Date.now();if(dbDirty)dbSoon(300);else if(typeof refreshDbNote==='function')refreshDbNote();})
+   .catch(function(){dbBusy=false;dbState='err';dbDirty=true;if(typeof refreshDbNote==='function')refreshDbNote();dbSoon(15000);});
+}
+function dbSoon(ms){if(!DBREF)return;clearTimeout(dbT);dbT=setTimeout(dbFlush,ms);}
+function deepMergeS(a,b){var r=Object.assign({},a);Object.keys(b||{}).forEach(function(k){var x=b[k],y=r[k];if(x&&typeof x==='object'&&!Array.isArray(x))r[k]=deepMergeS(y&&typeof y==='object'?y:{},x);else r[k]=x;});return r;}
+function mergeRemote(rem){
+  var localWins=(S.ts||0)>=(rem.ts||0),win=localWins?S:rem,lose=localWins?rem:S,out=Object.assign(def(),lose,win);
+  ['ci','done','load','log'].forEach(function(f){out[f]=deepMergeS(lose[f]&&typeof lose[f]==='object'?lose[f]:{},win[f]&&typeof win[f]==='object'?win[f]:{});});
+  ['place','longDay'].forEach(function(f){out[f]=Object.assign({},win[f]||{});});
+  if(lose.created&&(!out.created||lose.created<out.created))out.created=lose.created;
+  S=out;
+}
+function dbInit(){
+  try{
+    if(!(window.claude&&window.claude.use))return;
+    window.claude.use('db').then(function(db){
+      if(!db)return;
+      DBREF=db.doc('plan/state');dbState='connecting';
+      var timer=setTimeout(function(){if(dbState==='connecting'){dbState='err';if(typeof refreshDbNote==='function')refreshDbNote();}},10000);
+      return DBREF.get().then(function(snap){
+        clearTimeout(timer);
+        if(snap.exists){var d=snap.data();try{var rem=d&&d.s?JSON.parse(d.s):null;if(rem&&typeof rem==='object'){mergeRemote(rem);_bc=null;_pc=null;try{var j=JSON.stringify(S);localStorage.setItem(STORE,j);localStorage.setItem(BAK,j);}catch(e){}}}catch(e){}}
+        dbState='ok';dbDirty=true;dbSoon(200);
+        if(typeof render==='function')render();
+      });
+    }).catch(function(){dbState='err';if(typeof refreshDbNote==='function')refreshDbNote();});
+  }catch(e){}
+}
+
+/* ---------- icons ---------- */
+var IC={
+ q:'<svg viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>',
+ e:'<svg viewBox="0 0 24 24"><path d="M2 12c3-6 6 6 10 0s7 6 10 0"/></svg>',
+ l:'<svg viewBox="0 0 24 24"><path d="M5 21V4h12l-3 4 3 4H5"/></svg>',
+ s:'<svg viewBox="0 0 24 24"><path d="M6 7v10M3 9.5v5M18 7v10M21 9.5v5M6 12h12"/></svg>',
+ rest:'<svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>',
+ today:'<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18M9 15l2 2 4-4"/></svg>',
+ plan:'<svg viewBox="0 0 24 24"><path d="M5 20V10M12 20V4M19 20v-7"/></svg>',
+ zones:'<svg viewBox="0 0 24 24"><path d="M3 12h4l2-6 4 12 2-6h6"/></svg>',
+ info:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>',
+ prev:'<svg viewBox="0 0 24 24" width="20" height="20"><path d="m9 6 6 6-6 6"/></svg>',
+ next:'<svg viewBox="0 0 24 24" width="20" height="20"><path d="m15 6-6 6 6 6"/></svg>',
+ plane:'<svg viewBox="0 0 24 24"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg>',
+ log:'<svg viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg>',
+ y:'<svg viewBox="0 0 24 24"><path d="M12 4c2 3 2 6 0 9-2-3-2-6 0-9zM3.5 11c3.2 0 6 1.6 8.5 5-3.3 1-6.8 0-8.500-5zM20.5 11c-3.2 0-6 1.6-8.5 5 3.3 1 6.8 0 8.5-5zM6 20h12"/></svg>'
+};
+
+/* ---------- plan data ---------- */
+var WEEKS=[
+ {n:1,name:'טעינה',range:'8–14.11',focus:'בסיס · RPE 7'},
+ {n:2,name:'בנייה',range:'15–21.11',focus:'בנייה · RPE 7.5'},
+ {n:3,name:'שיא',range:'22–28.11',focus:'שיא · RPE 8–8.5'},
+ {n:4,name:'חידוד ופרידה',range:'29.11–3.12',focus:'קל · RPE 6'}
+];
+var QUAL=[
+ {t:'5×1000 בקצב 5K',n:5,m:1000,rest:'2:00',km:10,pace:'3:48–3:52',hr:'165–174',lines:['חימום 2.5 ק״מ קל, 4 תרגילי תנועתיות, 4 סטרייד של 20 שנ׳ (מנוחה 60 שנ׳ בהליכה)','5 × 1000 מ׳ בקצב 3:48–3:52, מנוחה 2:00 ג׳וג קל','שחרור 2 ק״מ'],y:'4×1000 בקצה האיטי של הטווח (3:52–3:56), מנוחה 2:30.'},
+ {t:'3×2000 בקצב סף',n:3,m:2000,rest:'2:00',km:11,pace:'3:58–4:02',hr:'168–174',lines:['חימום 2.5 ק״מ קל ו-4 סטרייד של 20 שנ׳ (מנוחה 60 שנ׳ בהליכה)','3 × 2000 מ׳ בקצב 3:58–4:02 (קצב 10K), מנוחה 2:00 ג׳וג','שחרור 2 ק״מ'],y:'2×2000 בקצב 4:02–4:06, מנוחה 2:30.'},
+ {t:'6×1000 מהיר',n:6,m:1000,rest:'1:30',km:11,pace:'3:44–3:48',hr:'170–180',lines:['חימום 2.5 ק״מ קל ו-4 סטרייד של 20 שנ׳ (מנוחה 60 שנ׳ בהליכה)','6 × 1000 מ׳ בקצב 3:44–3:48, מנוחה 1:30 ג׳וג','שחרור 2 ק״מ'],y:'5×1000 בקצב 3:48–3:52, מנוחה 2:00.'},
+ {t:'4×800 חידוד',n:4,m:800,rest:'2:00',km:8,pace:'3:38–3:42',hr:'170–180',lines:['חימום 2.5 ק״מ קל ו-4 סטרייד של 20 שנ׳ (מנוחה 60 שנ׳ בהליכה)','4 × 800 מ׳ בקצב 3:38–3:42, מנוחה 2:00 ג׳וג','שחרור 2 ק״מ. קצר בכוונה, יוצאים עם עוד בטנק'],y:'3×800 בקצב 3:42–3:46, מנוחה 2:00.'}
+];
+var E1=[7,8,8,6], E2=[5,5,5,4], LONGKM=[12,14,15];
+function P(a,wi){return a[Math.min(wi,a.length-1)];}
+
+
+var NAMES={Q:'ריצת איכות',E1:'ריצה קלה',E2:'ריצה קלה קצרה',EJ:'ריצה קלה',L:'ריצה ארוכה',U1:'פירמידת מתח',U2:'פלג גוף עליון',LG:'רגליים',AT:'אתלטיקה',YG:'יוגה',MOB:'מוביליטי',ROLL:'גלגול רגליים'};
+var YOGA=[
+ {title:'יוגה לרצים: ירכיים ושוקיים',min:30,focus:'שבוע 1: פתיחת ירכיים, שוקיים ושרשרת אחורית אחרי האיכות והרגליים.',poses:[
+  {n:'תנוחת ילד עם נשימה סרעפתית',t:'2 דק׳',r:'10 שנ׳',c:'שאיפה 4 שנ׳, נשיפה 6 שנ׳. מורידים דופק ומתחילים לאט'},
+  {n:'חתול-פרה',t:'10 חזרות',r:'10 שנ׳',c:'נשימה אחת לכל תנועה'},
+  {n:'כלב מביט מטה, דריכה על העקבים',t:'3×45 שנ׳',r:'15 שנ׳ בתנוחת ילד בין סטים',c:'מחליפים עקב לעקב כדי לשחרר את השוקיים'},
+  {n:'לאנץ׳ נמוך (פסואס)',t:'2×60 שנ׳ לכל צד',r:'15 שנ׳ בין הצדדים',c:'האגן מתחת לגוף, בלי לקעור את הגב'},
+  {n:'יונה (פתיחת ירך חיצונית)',t:'2×60 שנ׳ לכל צד',r:'15 שנ׳ בין הצדדים',c:'אם הירך לא מגיעה לרצפה, כרית מתחתיה'},
+  {n:'התכופפות קדימה בישיבה (ירך אחורית)',t:'2×60 שנ׳',r:'15 שנ׳ בין סטים',c:'גב ארוך, לא עגול'},
+  {n:'פיתול בשכיבה',t:'60 שנ׳ לכל צד',r:'15 שנ׳ בין הצדדים',c:'כתפיים על הרצפה, נשימה איטית'},
+  {n:'שוואסנה (שכיבת הרפיה)',t:'4 דק׳',r:'בלי תזוזה',c:'עיניים עצומות, כל הגוף כבד'}]},
+ {title:'יוגה לרצים: מותניים, ירכיים וגב תחתון',min:30,focus:'שבוע 2: מרכז הגוף והירכיים אחרי שבוע של סף ופירמידה.',poses:[
+  {n:'תנוחת ילד עם נשימה סרעפתית',t:'2 דק׳',r:'10 שנ׳',c:'שאיפה 4 שנ׳, נשיפה 6 שנ׳'},
+  {n:'חתול-פרה',t:'10 חזרות',r:'10 שנ׳',c:'נשימה אחת לכל תנועה'},
+  {n:'ציפור-כלב',t:'2×8 לכל צד',r:'30 שנ׳ בין סטים',c:'עצירה של 3 שנ׳ בכל חזרה, האגן ישר'},
+  {n:'ישיבת 90/90 לירכיים',t:'2×60 שנ׳ לכל צד',r:'15 שנ׳ בין הצדדים',c:'גב ישר, מטים את הגו קדימה בעדינות'},
+  {n:'צפרדע',t:'2×45 שנ׳',r:'20 שנ׳ בין סטים',c:'ברכיים על כרית, האגן נשאר גבוה'},
+  {n:'תינוק שמח',t:'60 שנ׳',r:'15 שנ׳',c:'הגב התחתון נצמד לרצפה'},
+  {n:'הרמת רגל ישרה עם רצועה (ירך אחורית)',t:'2×60 שנ׳ לכל צד',r:'15 שנ׳ בין הצדדים',c:'הרגל השנייה ישרה על הרצפה'},
+  {n:'פיתול בשכיבה',t:'60 שנ׳ לכל צד',r:'15 שנ׳ בין הצדדים',c:'נשימה איטית'},
+  {n:'שוואסנה (שכיבת הרפיה)',t:'4 דק׳',r:'בלי תזוזה',c:'עיניים עצומות'}]},
+ {title:'יוגה לרצים: חזה, גב עליון וכתפיים',min:30,focus:'שבוע 3: שיא העומס בכוח העליון. משחררים כתפיים וחזה אחרי מתח ומקבילים.',poses:[
+  {n:'תנוחת ילד עם ידיים ארוכות',t:'2 דק׳',r:'10 שנ׳',c:'נשימה לתוך הצלעות'},
+  {n:'חתול-פרה',t:'10 חזרות',r:'10 שנ׳',c:'נשימה אחת לכל תנועה'},
+  {n:'השחלת מחט (גב עליון וכתף)',t:'2×45 שנ׳ לכל צד',r:'15 שנ׳ בין הצדדים',c:'הכתף נחה על הרצפה'},
+  {n:'תנוחת גור (כתפיים וחזה)',t:'2×45 שנ׳',r:'20 שנ׳ בין סטים',c:'המצח או הסנטר על הרצפה, אגן מעל הברכיים'},
+  {n:'פתיחת חזה עם ידיים משולבות מאחור',t:'2×30 שנ׳',r:'15 שנ׳ בין סטים',c:'חזה קדימה, לא קשת בגב התחתון'},
+  {n:'לאנץ׳ נמוך עם פיתול',t:'2×45 שנ׳ לכל צד',r:'15 שנ׳ בין הצדדים',c:'ידיים לשמיים, נשימה איטית'},
+  {n:'יונה (פתיחת ירך חיצונית)',t:'60 שנ׳ לכל צד',r:'15 שנ׳ בין הצדדים',c:'כרית מתחת לירך אם צריך'},
+  {n:'פיתול בשכיבה',t:'60 שנ׳ לכל צד',r:'15 שנ׳ בין הצדדים',c:'נשימה איטית'},
+  {n:'שוואסנה (שכיבת הרפיה)',t:'4 דק׳',r:'בלי תזוזה',c:'עיניים עצומות'}]},
+ {title:'יוגה קלה לפני הפרידה',min:20,focus:'שבוע 4: קצר ורגוע, בלי להגיע לקצה. מגיעים לגיוס עם גוף רופף.',poses:[
+  {n:'תנוחת ילד עם נשימה סרעפתית',t:'2 דק׳',r:'10 שנ׳',c:'שאיפה 4 שנ׳, נשיפה 6 שנ׳'},
+  {n:'חתול-פרה',t:'10 חזרות',r:'10 שנ׳',c:'נשימה אחת לכל תנועה'},
+  {n:'כלב מביט מטה',t:'2×45 שנ׳',r:'15 שנ׳ בתנוחת ילד בין סטים',c:'דריכה על העקבים'},
+  {n:'לאנץ׳ נמוך (פסואס)',t:'60 שנ׳ לכל צד',r:'15 שנ׳ בין הצדדים',c:'האגן מתחת לגוף'},
+  {n:'יונה (פתיחת ירך חיצונית)',t:'60 שנ׳ לכל צד',r:'15 שנ׳ בין הצדדים',c:'כרית מתחת לירך אם צריך'},
+  {n:'פיתול בשכיבה',t:'60 שנ׳ לכל צד',r:'15 שנ׳ בין הצדדים',c:'נשימה איטית'},
+  {n:'שוואסנה (שכיבת הרפיה)',t:'4 דק׳',r:'בלי תזוזה',c:'עיניים עצומות'}]}
+];
+function mkYoga(wi,after){
+  var Y=YOGA[Math.min(wi,3)],poses=Y.poses.slice();
+  if(after)poses=poses.slice(0,poses.length-1).concat([{n:'רגליים על הקיר',t:'5 דק׳',r:'בלי תזוזה',c:'מרפים את הרגליים אחרי הארוכה'},poses[poses.length-1]]);
+  return{id:'YG',kind:'yoga',cls:'y',ic:'y',tag:'יוגה ומתיחות · שבועי',title:Y.title,min:after?25:Y.min,poses:poses,focus:Y.focus,after:!!after,wi:wi};
+}
+
+function mkRun(id,wi){
+  if(id==='Q'){var q=QUAL[wi];return{id:'Q',cls:'q',ic:'q',kind:'run',tag:'ריצת איכות',title:q.t,km:q.km,lines:q.lines,pace:q.pace,hr:q.hr,y:q.y,q:q,rest:q.rest,
+    r:'ריצה קלה 30–40 דק׳ בדופק מתחת ל-140, או מנוחה. אם מחר מרגיש טוב, מחליפים בין האיכות לריצה הקלה הבאה.'};}
+  if(id==='E1')return{id:'E1',cls:'e',ic:'e',kind:'run',tag:'ריצה קלה',title:'ריצה קלה '+E1[wi]+' ק״מ',km:E1[wi],lines:['קצב שיחה, בלי לרדוף אחרי קצב','הדופק קובע, לא השעון'],pace:'5:10–5:55',hr:'עד 145',y:'מקצרים ל-'+Math.round(E1[wi]*0.75)+' ק״מ, דופק עד 138.',r:'הליכה או ג׳וג 20–30 דק׳ בדופק מתחת ל-130, או מנוחה.'};
+  if(id==='EJ')return{id:'EJ',cls:'e',ic:'e',kind:'run',tag:'ריצה קלה · אחרי הטיסה',title:'ריצה קלה 5 ק״מ',km:5,lines:['בחוץ, באור יום, בקצב שיחה','אם הגוף כבד: 20–25 דק׳ במקום 5 ק״מ','בלי סטרייד ובלי מהירות'],pace:'5:20–6:00',hr:'עד 140',y:'מקצרים ל-4 ק״מ, דופק עד 135.',r:'הליכה 20 דק׳ בחוץ ומוביליטי.'};
+  if(id==='E2')return{id:'E2',cls:'e',ic:'e',kind:'run',tag:'ריצה קלה קצרה',title:'ריצה קלה '+E2[wi]+' ק״מ + 5 סטרייד',km:E2[wi],lines:['ריצה קלה בקצב שיחה','בסוף 5 סטרייד של 20 שנ׳, מנוחה 60 שנ׳ בהליכה בין סטרייד'],pace:'5:10–5:55',hr:'עד 145',y:'מקצרים ל-'+Math.round(E2[wi]*0.75)+' ק״מ, בלי סטרייד.',r:'מוותרים על הריצה, מוביליטי 15 דק׳.'};
+  var km=LONGKM[wi],l=['ריצה רציפה, קצב נוח, דופק יציב'];
+  if(wi===2)l.push('אם מרגיש חזק: 2 ק״מ אחרונים בקצב 4:50–5:00. רשות.');
+  return{id:'L',cls:'l',ic:'l',kind:'run',tag:'ריצה ארוכה',title:'ריצה ארוכה '+km+' ק״מ',km:km,lines:l,pace:'5:15–5:55',hr:'עד 148',y:'מקצרים ל-'+Math.round(km*0.75)+' ק״מ, דופק עד 140, בלי סיום מהיר.',r:'מוותרים או ריצה קלה 30 דק׳. אפשר להזיז ליום אחר באותו שבוע.'};
+}
+
+var WHY={
+ Q:['מחזירים לגוף את קצב היעד של ה-5K אחרי שבוע רענון. נפח של 5 ק״מ בקצב הזה בונה קצב מירוץ בלי להרוס את הרגליים.',
+    'קצב 10K בחזרות ארוכות מעלה את סף הלקטט, כלומר הקצב שאפשר להחזיק זמן רב. זה מה שמחזיק אותך בחצי השני של ה-5K.',
+    'שיא השיפור. קצב מעל קצב ה-5K בחזרות של קילומטר מעלה את ה-VO2max ואת הכלכליות בריצה. אחריו רק מחדדים.',
+    'נפח קטן ומהיר כדי להישאר חד בלי עייפות. להגיע לגיוס עם רגליים רעננות שווה יותר מעוד ק״מים מהירים.'],
+ E1:'ריצה קלה בונה בסיס אירובי ומזרימה דם לשרירים אחרי האיכות, וזה מאיץ התאוששות. היא קלה בכוונה: ריצה קלה שרצים מהר מקלקלת את האיכות של האימון הבא.',
+ E2:'ריצה קצרה עם סטרייד שומרת על תדירות ריצה בשבוע ומחדדת מכניקה ומהירות בלי עומס, יומיים לפני הארוכה.',
+ EJ:'הפרש של 7 שעות. ריצה קלה באור יום מזיזה את השעון הביולוגי ומשחררת את הרגליים אחרי הטיסה, בלי להעמיס על גוף עייף.',
+ L:'הריצה הארוכה בונה סיבולת, נימים ושרירים שמחזיקים לאורך זמן. נשארים בדופק נמוך כדי שהיא תבנה בסיס ולא תהפוך לאימון איכות.',
+ U1:'הפירמידה בונה סיבולת שרירית בגב, בחזה ובזרועות, בתנועות שהיחידה בוחנת: מתח ומקבילים. הווסט בסבב הראשון מוסיף עומס, והסבב השני בלי ווסט בונה נפח. היא באה אחרי האיכות כי היא לא מעמיסה על הרגליים.',
+ U2:'כוח מרבי בפלג העליון בחזרות נמוכות עם משקל. זה מוסיף כוח בלי נפח גדול, ובא 48 שעות אחרי הפירמידה כדי שהשרירים יספיקו להתאושש.',
+ LG:'סקוואט, דדליפט וצעד חד-רגלי בונים כוח רגליים שמגן מפציעות ומשפר את הכלכליות בריצה. הקפיצה לקופסה מוסיפה כוח מתפרץ.',
+ AT:'קלינים, סווינגס, סחיבות וברפיז בונים כוח מתפרץ וכושר מעורב, בדיוק מה שנדרש ביחידה מיוחדת. האימון מתון כי הוא בא אחרי איכות, ומכוון למהירות ולטכניקה.',
+ MOB:'מוביליטי שומר על טווח תנועה בירכיים, בשוקיים ובכתפיים, ומוריד מתח לפני הגיוס.',
+ YG:'יוגה שבועית שומרת על טווח תנועה בירכיים ובשוקיים, מורידה מתח ומשפרת שינה. היא בשבת כי זה יום בלי עומס: אחרי שבוע עם הרבה אימונים הגוף צריך זמן שבו הוא מתאושש בלי לעשות כלום.',
+ ROLL:'גלגול רגליים משחרר מתח אחרי הטיסה ומשפר זרימת דם, בלי עומס שרירי. בשבוע הנסיעה זה כל מה שהגוף צריך ביום הזה.'
+};
+var PROG={
+ U1:['שבוע 1: ווסט קל, כל חזרה נקייה.','שבוע 2: ווסט 1–2 ק״ג יותר מהשבוע שעבר.','שבוע 3: ווסט עוד 1–2 ק״ג, הסבב הראשון עד RPE 8.','שבוע 4: סבב אחד בלי ווסט. רעננים לגיוס.'],
+ U2:['שבוע 1: מכוונים ל-RPE 7 וקובעים משקלים.','שבוע 2: חזרה אחת יותר או 1–2 ק״ג יותר מהשבוע שעבר.','שבוע 3: שיא. פחות חזרות, משקל גבוה יותר.','שבוע 4: קל, 3 סטים, בלי כשל.'],
+ LG:['שבוע 1: RPE 7 וקובעים משקלים.','שבוע 2: 2.5 ק״ג יותר בסקוואט אם כל החזרות נקיות.','שבוע 3: שיא. סקוואט 5×3 כבד. קפיצות לקופסה מחליפות את העליות.'],
+ AT:['מהירות וטכניקה. אתה אחרי ריצת איכות, אז לא מגיעים לעייפות.','אותו עומס, תנועה מהירה ונקייה.','אותו עומס, 4 קלינים. בלי להגיע לכשל.','קל: חצי נפח. מתחדדים.']
+};
+function mkStr(id,wi,o){
+  var L=wi===3,ex=[],o;
+  if(id==='U1'){
+    if(!L)ex.push({id:'pyr1',n:'פירמידה 10→1, מתח ומקבילים. סבב ראשון עם ווסט',t:'10 · 9 · … · 1',rpe:P([7,7.5,8],wi),rest:'בין זוגות: 60 שנ׳ (10–6), 40 שנ׳ (5–1)',cue:'בכל מדרגה מתח ואז מקבילים. ווסט: משקל שמאפשר 10 חזרות נקיות ב-RPE 7.',load:1,unit:'ק״ג ווסט'});
+    ex.push({id:'pyr2',n:L?'פירמידה 10→1, מתח ומקבילים, בלי ווסט':'סבב שני, בלי ווסט',t:'10 · 9 · … · 1',rpe:L?6:P([7,7,7.5],wi),rest:'בין זוגות: 60 שנ׳ (10–6), 40 שנ׳ (5–1)'});
+    ex.push({id:'knee',n:'הרמות ברכיים בתלייה',sr:L?'2×12':'3×12',rpe:7,rest:'45 שנ׳'});
+    if(!L){ex.push({id:'fpull',n:'פייס פול עם גומייה',sr:'2×15',rpe:6,rest:'30 שנ׳',cue:'לבריאות הכתף והמרפק'});ex.push({id:'plank',n:'פלאנק',sr:'3×45 שנ׳',rpe:7,rest:'30 שנ׳'});}
+    return{id:'U1',kind:'u',cls:'s',ic:'s',tag:'כוח · נפח',title:'פירמידת מתח ומקבילים',min:L?30:45,ex:ex,light:L,prog:PROG.U1[wi]};
+  }
+  if(id==='U2'){
+    ex=[
+     {id:'wpu',n:'מתח עם משקל',sr:P(['4×5','5×4','5×3','3×3'],wi),rpe:P([7,7.5,8.5,6],wi),rest:'60 שנ׳ ואז מקבילים',ss:'A1',load:1,cue:'מורידים לגמרי, מתחילים מתלייה מתה'},
+     {id:'wdip',n:'מקבילים עם משקל',sr:P(['4×6','4×5','4×4','3×3'],wi),rpe:P([7,7.5,8.5,6],wi),rest:'2:30 אחרי הזוג',ss:'A2',load:1,cue:'מתחלפים עם המתח, מנוחה בין הזוגות'},
+     {id:'ohp',n:'לחיצת כתפיים',sr:P(['4×6','4×6','4×5','3×5'],wi),rpe:P([7,7.5,8,6],wi),rest:'60 שנ׳ ואז חתירה',ss:'B1',load:1},
+     {id:'row',n:'חתירה',sr:P(['4×8','4×8','4×6','3×8'],wi),rpe:P([7.5,8,8,6],wi),rest:'2:00 אחרי הזוג',ss:'B2',load:1,cue:'מתחלפים עם הלחיצה'},
+     {id:'pu',n:'שכיבות שמיכה',sr:P(['3×15','3×18','3×20','2×15'],wi),rpe:P([7,8,8,6],wi),rest:'60 שנ׳',cue:'ירידה 2 שניות, עצירה קצרה למטה'},
+     {id:'t2b',n:'טואוז טו בר',sr:P(['3×8','3×10','3×10','2×8'],wi),rpe:P([7,7.5,8,6],wi),rest:'60 שנ׳'}
+    ];
+    return{id:'U2',kind:'u',cls:'s',ic:'s',tag:'כוח · משקל',title:'פלג גוף עליון',min:L?40:55,ex:ex,light:L,prog:PROG.U2[wi]};
+  }
+  if(id==='LG'){
+    ex=[
+     {id:'sq',n:'סקוואט',sr:P(['4×6','4×5','5×3'],wi),rpe:P([7,7.5,8.5],wi),rest:'2:30',load:1},
+     {id:'rdl',n:'דדליפט רומני',sr:P(['3×8','3×8','3×6'],wi),rpe:P([7,7.5,8],wi),rest:'2:00',load:1,cue:'גב ניטרלי, ירידה איטית'},
+     {id:'bss',n:'לאנץ׳ בולגרי',sr:P(['3×8','3×8','3×6'],wi)+' לכל רגל',rpe:P([7.5,8,8],wi),rest:'90 שנ׳',load:1},
+     wi<2?{id:'stp',n:'עליות מדרגה עם משקל',sr:'3×10 לכל רגל',rpe:7,rest:'60 שנ׳',load:1}:{id:'box',n:'קפיצה לקופסה',sr:'4×4',rpe:7,rest:'90 שנ׳',cue:'מהיר, נחיתה שקטה, יורדים בהליכה'},
+     {id:'farm',n:'הליכון איכר',sr:'4×40 מ׳',rpe:8,rest:'60 שנ׳',load:1}
+    ];
+    var lg={id:'LG',kind:'legs',cls:'s',ic:'s',tag:'כוח · רגליים',title:'רגליים',min:55,ex:ex,light:false,prog:PROG.LG[wi]};
+    if(o&&o.lite){ex.forEach(function(e){e.sr=adj(e.sr,-1);e.rpe=Math.min(e.rpe,7);});lg.min=45;lg.prog='שבוע טיול: עומס מופחת, סט אחד פחות בכל תרגיל. RPE 7 וגב ישר, בלי כשל.';}
+    return lg;
+  }
+  ex=[
+   {id:'cln',n:'קלינים',sr:P(['5×3','5×3','4×3','3×3'],wi),rpe:P([6.5,7,7,6],wi),rest:'90 שנ׳',load:1,cue:'מהירות וטכניקה, לא כוח. בלי כשל'},
+   {id:'ksw',n:'קטלבל סווינגס',sr:L?'3×15':'5×15',rpe:7,rest:'60 שנ׳',load:1,cue:'כוח מהמפשעה, לא מהידיים'},
+   {id:'circ',n:'מעגל: 10 ברפיז · 40 מ׳ סחיבה על הכתף (20+20) · 40 מ׳ הליכת איכר',t:L?'2 סבבים':'4 סבבים',rpe:7,rest:'30 שנ׳ בין תחנות, 90 שנ׳ בין סבבים'}
+  ];
+  return{id:'AT',kind:'ath',cls:'s',ic:'s',tag:'כוח · אתלטיקה',title:'אתלטיקה',min:L?35:45,ex:ex,light:L,prog:PROG.AT[wi]};
+}
+
+function basePlan(d){
+  var off=offset(d),wi=clamp(Math.floor(off/7),0,3),dow=d.getDay();
+  var p={d:d,wi:wi,runs:[],str:null,note:'',kind:'train',carry:false,mob:false};
+  var kk=key(d);
+  if(kk==='2026-12-03'){p.kind='enlist';return p;}
+  if(kk==='2026-11-10'||kk==='2026-11-18'){p.kind='travel';p.travel=kk==='2026-11-10'?'out':'back';return p;}
+  if(kk==='2026-11-09'){p.runs.push(mkRun('E1',0));p.str=mkStr('AT',0);p.note='הטיסה בלילה: ריצה בבוקר, אתלטיקה אחר הצהריים ולא בערב.';return p;}
+  if(kk==='2026-11-11'){if(S.runs===4)p.runs.push(mkRun('EJ',0));p.roll=true;p.note='הבוקר הראשון בפיטסבורג. ריצה קלה וגלגול רגליים, וזהו.';return p;}
+  if(kk==='2026-11-12'){p.str=mkStr('U2',0);p.note='כוח בחדר הכושר, בלי ריצה. רגליים חוזרות אחרי הנסיעה.';return p;}
+  if(kk==='2026-11-17'){p.str=mkStr('U2',1);p.note='חדר הכושר בפיטסבורג. מחר יום נסיעה, אז שותים הרבה ומתארגנים.';return p;}
+  if(kk==='2026-11-19'){if(S.runs===4)p.runs.push(mkRun('E2',1));p.str=mkStr('LG',1,{lite:true});p.note='יום אחרי הטיסה חזרה. ריצה קלה ורגליים בעומס מופחת.';return p;}
+  var ld=S.longDay[wi]||'fri';
+  if(dow===0){p.runs.push(mkRun('Q',wi));p.str=mkStr('U1',wi);p.note='איכות בבוקר, פירמידה בערב.';
+    if(wi>0&&S.longDay[wi-1]==='sat'){p.carry=true;}}
+  else if(dow===1){p.runs.push(mkRun('E1',wi));p.str=mkStr('AT',wi);p.note='ריצה קלה בבוקר, אתלטיקה בערב.';}
+  else if(dow===2){p.str=mkStr('U2',wi);p.note='48 שעות אחרי הפירמידה, והפעם כוח.';}
+  else if(dow===3){
+    if(wi<3){p.str=mkStr('LG',wi);p.note='72 שעות אחרי האיכות ו-48 לפני הארוכה.';}
+    else{if(S.runs===4)p.runs.push(mkRun('E2',3));p.yoga=mkYoga(3);p.note='היום לא מרימים. ריצה קצרה ויוגה קלה, ארוחה טובה ושינה מוקדמת.';}
+  }
+  else if(dow===4){
+    if(wi<3){if(S.runs===4)p.runs.push(mkRun('E2',wi));else{p.kind='rest';}
+      p.note='רצים ביום ויוצאים בערב? מסמנים אלכוהול בצ׳ק-אין של מחר.';}
+  }
+  else if(dow===5){if(ld==='fri')p.runs.push(mkRun('L',wi));else{p.kind='rest';p.note='הארוכה הוזזה לשבת. היום מנוחה.';}}
+  else if(dow===6){if(ld==='sat')p.runs.push(mkRun('L',wi));else{p.kind='rest';}
+    if(wi<3){p.yoga=mkYoga(wi,ld==='sat');p.note=ld==='sat'?'ארוכה בבוקר ויוגה רכה אחריה, להרפיית הרגליים.':'יום מנוחה עם סשן יוגה שבועי. מרפים את הגוף לפני יום ראשון.';}else p.note='מנוחה מלאה.';}
+  if(!p.runs.length&&!p.str&&!p.mob&&p.kind!=='enlist')p.kind='rest';
+  return p;
+}
+function bases(){if(!_bc){_bc=[];for(var i=0;i<=LAST;i++)_bc.push(basePlan(dateOf(i)));}return _bc;}
+function dateFromKey(k){var m=k.split('-');return new Date(+m[0],+m[1]-1,+m[2],12);}
+function baseItems(b){
+  var a=[];b.runs.forEach(function(r){a.push({t:'run',o:r});});
+  if(b.str)a.push({t:'str',o:b.str});
+  if(b.mob)a.push({t:'mob',o:{id:'MOB',cls:'s',kind:'mob',title:'מוביליטי'}});
+  if(b.roll)a.push({t:'roll',o:{id:'ROLL',cls:'s',kind:'roll',title:'גלגול רגליים'}});
+  if(b.yoga)a.push({t:'yoga',o:b.yoga});
+  return a;
+}
+function movable(b){return b.kind!=='travel'&&b.kind!=='enlist';}
+function composed(){
+  if(_pc)return _pc;
+  var B=bases(),pl=S.place||{},out=[],i;
+  for(i=0;i<=LAST;i++){var b=B[i];out.push({d:b.d,wi:b.wi,kind:b.kind,travel:b.travel,note:b.note,runs:[],strs:[],mob:null,roll:null,yoga:null,carry:false,chg:false});}
+  for(i=0;i<=LAST;i++){
+    if(!movable(B[i]))continue;
+    var bk=key(B[i].d);
+    baseItems(B[i]).forEach(function(it){
+      var o=it.o,ti=i,tk=pl[bk+':'+o.id];
+      if(tk){var x=offset(dateFromKey(tk));if(x>=0&&x<=LAST&&movable(B[x]))ti=x;}
+      var dst=out[ti];
+      if((it.t==='mob'||it.t==='roll'||it.t==='yoga')&&dst[it.t]&&ti!==i)ti=i,dst=out[i];
+      o.from=bk;o.moved=ti!==i;o.wi=B[i].wi;
+      if(ti!==i){dst.chg=true;out[i].chg=true;}
+      if(it.t==='run')dst.runs.push(o);else if(it.t==='str')dst.strs.push(o);else dst[it.t]=o;
+    });
+  }
+  for(i=0;i<=LAST;i++){var p=out[i];
+    var has=p.runs.length||p.strs.length||p.mob||p.roll||p.yoga;
+    if(p.kind!=='travel'&&p.kind!=='enlist')p.kind=has?'train':'rest';
+    if(p.chg)p.note=has?'היום הותאם לפי ההזזות שלך.':'יום מנוחה אחרי ההזזה.';
+  }
+  for(i=1;i<=LAST;i++){if(out[i].runs.some(function(r){return r.id==='Q';})&&out[i-1].runs.some(function(r){return r.id==='L';}))out[i].carry=true;}
+  _pc=out;return out;
+}
+function dayPlan(d){var o=offset(d);if(o>=0&&o<=LAST)return composed()[o];return{d:d,wi:clamp(Math.floor(o/7),0,3),runs:[],strs:[],kind:'rest',note:'',mob:null,roll:null,yoga:null,carry:false};}
+function weekKm(wi){var t=0;for(var i=0;i<7;i++){var d=addDays(START,wi*7+i);if(d>END)break;dayPlan(d).runs.forEach(function(r){t+=r.km;});}return t;}
+function sessList(p){var a=p.runs.slice();(p.strs||[]).forEach(function(s){a.push(s);});if(p.mob)a.push(p.mob);if(p.roll)a.push(p.roll);if(p.yoga)a.push(p.yoga);return a;}
+function weekProgress(wi){var tot=0,dn=0;for(var i=0;i<7;i++){var d=addDays(START,wi*7+i);if(d>END)break;var p=dayPlan(d),s=S.done[key(d)]||{};sessList(p).forEach(function(x){tot++;if(s[x.id])dn++;});}return[dn,tot];}
+
+/* ---------- readiness ---------- */
+var DEFCI={e:8,s:2,sl:7.5,st:2,p:0,pw:'',alc:false};
+function getCI(k){return Object.assign({},DEFCI,S.ci[k]||{});}
+function readiness(c){
+  var sleep=clamp((c.sl-4)/4,0,1)*100;
+  var sc=0.30*c.e*10+0.25*sleep+0.25*(10-c.s)*10+0.20*(10-c.st)*10;
+  if(c.alc)sc-=12;
+  sc=Math.round(clamp(sc,0,100));
+  var z=sc>=75?'green':sc>=55?'yellow':'red';
+  if(c.alc&&z==='green')z='yellow';
+  var why=[];
+  if(c.sl<6.5)why.push('שינה קצרה ('+c.sl+' ש׳)');
+  if(c.e<=5)why.push('אנרגיה נמוכה');
+  if(c.s>=6)why.push('כאב שרירים');
+  if(c.st>=7)why.push('לחץ גבוה');
+  if(c.alc)why.push('אלכוהול אתמול');
+  return{score:sc,zone:z,why:why};
+}
+var ZTXT={green:'ירוק · לפי התוכנית',yellow:'צהוב · מורידים עומס',red:'אדום · התאוששות'};
+var LOWER=['רגל','ברך','אכילס/קרסול','מפשעה'];
+function related(kind,pw){
+  if(!pw||pw==='אחר')return true;
+  if(LOWER.indexOf(pw)>=0)return kind==='run'||kind==='legs'||kind==='ath';
+  if(pw==='כתף/מרפק')return kind==='u'||kind==='ath';
+  if(pw==='גב')return kind==='legs'||kind==='ath'||kind==='u';
+  return true;
+}
+function modeFor(kind,rd,c,extra){
+  var m=rd.zone==='green'?null:rd.zone, msg='';
+  var rank={null:0,yellow:1,red:2};
+  function up(x,t){if(rank[x]>rank[m]){m=x;msg=t||'';}}
+  if(c.p>=6&&related(kind,c.pw))up('red','כאב'+(c.pw?' ב'+c.pw:'')+' ברמה '+c.p+'. מדלגים על האימון הזה. הליכה קלה או מוביליטי בלבד. אם זה נמשך יותר מ-3 ימים, כדאי לבדוק עם פיזיותרפיסט.');
+  else if(c.p>=4&&related(kind,c.pw))up('yellow','כאב'+(c.pw?' ב'+c.pw:'')+' ברמה '+c.p+'. מקלים ומונעים עומס על האזור.');
+  if(c.s>=7&&(kind==='legs'||kind==='ath'))up('red','כאב שרירים גבוה. מחליפים באימון קל לפלג גוף עליון או 20 דק׳ מוביליטי.');
+  if(extra==='carry')up('yellow','הארוכה הייתה אתמול. האיכות בקצה האיטי, חימום ארוך יותר.');
+  return{mode:m,msg:msg};
+}
+
+/* ---------- state ---------- */
+var tab='today',viewKey,weekSel;
+function todayKey(){var n=new Date(),d=new Date(n.getFullYear(),n.getMonth(),n.getDate(),12);return clamp(Math.round((d-START)/DAY),0,LAST);}
+viewKey=todayKey();weekSel=clamp(Math.floor(viewKey/7),0,3);
+var app=document.getElementById('app'),nav=document.getElementById('nav');
+function $(s){return document.querySelector(s);}
+function pctOf(el){return ((el.value-el.min)/(el.max-el.min)*100).toFixed(1)+'%';}
+
+/* ---------- views ---------- */
+function navHTML(){
+  return [['today','היום',IC.today],['plan','תוכנית',IC.plan],['log','יומן',IC.log],['zones','קצבים',IC.zones],['info','מידע',IC.info]].map(function(t){
+    return '<button data-act="tab" data-v="'+t[0]+'" aria-selected="'+(tab===t[0])+'">'+t[2]+'<span>'+t[1]+'</span></button>';}).join('');
+}
+/* keep numbers and ranges (5×1000, 3:48–3:52, 10→1) in reading order inside Hebrew text */
+function fb(s){return s.replace(/(\d)([×–→+])(\d)/g,'$1‎$2‎$3');}
+function render(){
+  nav.innerHTML=navHTML();
+  var h='';
+  if(tab==='today')h=todayHTML();else if(tab==='plan')h=planHTML();else if(tab==='log')h=logTabHTML();else if(tab==='zones')h=zonesHTML();else h=infoHTML();
+  app.innerHTML=fb(h);
+  if(tab==='today')dyn();
+}
+function heroHTML(){
+  var n=new Date(),t=new Date(n.getFullYear(),n.getMonth(),n.getDate(),12),left=Math.round((END-t)/DAY);
+  var num=left>0?'<div class="big mono" style="font-family:var(--font-display)">'+left+'<small>ימים לגיוס</small></div>':left===0?'<div class="big" style="font-size:3.4rem">היום הגיוס</div>':'<div class="big" style="font-size:3.4rem">בהצלחה</div>';
+  var pr=weekProgress(clamp(Math.floor(viewKey/7),0,3)),wi=clamp(Math.floor(viewKey/7),0,3);
+  return '<section class="hero"><div class="lanes"><i></i><i></i><i></i><i></i></div><div class="hero-in"><div class="eyebrow">ריצה עד הגיוס · 3.12.2026</div>'+num+
+   '<div class="hstats"><div><b>'+weekKm(wi)+'</b><span>ק״מ השבוע</span></div><div><b>'+pr[0]+'/'+pr[1]+'</b><span>אימונים הושלמו</span></div><div><b>'+WEEKS[wi].name+'</b><span>שבוע '+(wi+1)+' מתוך 4</span></div></div></div></section>';
+}
+function stripHTML(){
+  var wi=clamp(Math.floor(viewKey/7),0,3);
+  var h='<div class="wknav"><button data-act="wk" data-v="-1" '+(wi<=0?'disabled':'')+' aria-label="השבוע הקודם">'+IC.prev+'</button><div>שבוע '+(wi+1)+' · '+WEEKS[wi].name+'<small>'+WEEKS[wi].range+'</small></div><button data-act="wk" data-v="1" '+(wi>=3?'disabled':'')+' aria-label="השבוע הבא">'+IC.next+'</button></div><div class="strip">';
+  var tk=(function(){var n=new Date();return offset(new Date(n.getFullYear(),n.getMonth(),n.getDate(),12));})();
+  for(var i=0;i<7;i++){var o=wi*7+i;if(o>LAST){h+='<div></div>';continue;}
+    var d=dateOf(o),p=dayPlan(d),dn=S.done[key(d)]||{};
+    var dots=sessList(p).map(function(x){var col=x.cls==='q'?'var(--q)':x.cls==='e'?'var(--e)':x.cls==='l'?'var(--l)':x.cls==='y'?'var(--y)':'var(--s)';return '<i class="'+(dn[x.id]?'on':'')+'" style="--c:'+col+'"></i>';}).join('');
+    h+='<button class="dchip'+(o===viewKey?' sel':'')+(o===tk?' today':'')+(p.kind==='rest'?' off':'')+'" data-act="goday" data-v="'+o+'" aria-label="'+fmtDay(d)+'"><span class="wl">'+WL[d.getDay()]+'</span><span class="dn">'+d.getDate()+'</span><span class="dots">'+dots+'</span></button>';}
+  return h+'</div>';
+}
+function fmtDay(d){return 'יום '+WD[d.getDay()]+' · '+d.getDate()+'.'+(d.getMonth()+1);}
+function slider(id,label,min,max,step,val,lo,hi,unit){
+  var pct=((val-min)/(max-min)*100).toFixed(1)+'%';
+  return '<div class="sl"><label for="'+id+'">'+label+'<output id="o-'+id+'">'+val+(unit||'')+'</output></label><input type="range" id="'+id+'" data-k="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'" style="--pct:'+pct+'"><div class="ends"><span>'+lo+'</span><span>'+hi+'</span></div></div>';
+}
+function storageBanner(){
+  var h='';
+  if(inFrame&&!DBREF)h+='<div class="banner" style="margin-top:12px;border-color:var(--bad)"><b>האפליקציה פתוחה בתוך מסגרת של האתר שמארח אותה.</b> בדפדפן בטלפון זיכרון כזה נמחק כשעוברים לאפליקציה אחרת. פתח את הכתובת של האפליקציה ישירות, למשל בקודפן את הכתובת עם /full/ במקום /pen/, ולא את העורך.</div>';
+  if(!storeOK&&!DBREF)h+='<div class="banner" style="margin-top:12px;border-color:var(--bad)"><b>הדפדפן חוסם שמירה, ולכן הנתונים יימחקו כשתעבור לאפליקציה אחרת.</b> עד שזה נפתר, גבה אחרי כל אימון בכפתור "שמור גיבוי".<div class="row" style="margin-top:8px"><button class="btn" data-act="bksh">שמור גיבוי</button></div></div>';
+  else if(!DBREF){
+    var n=0;Object.keys(S.log||{}).forEach(function(dd){Object.keys(S.log[dd]).forEach(function(id){if(hasData(S.log[dd][id]))n++;});});
+    var old=!S.lastBackup||(Date.now()-S.lastBackup>3*864e5);
+    if(n>0&&old)h+='<div class="banner info" style="margin-top:12px"><b>כדאי לגבות.</b> '+n+' אימונים נשמרו בטלפון בלבד. לחיצה אחת שומרת עותק בהערות או בקבצים.<div class="row" style="margin-top:8px"><button class="btn" data-act="bksh">שמור גיבוי</button></div></div>';
+  }
+  return h;
+}
+function todayHTML(){
+  var d=dateOf(viewKey),k=key(d),c=getCI(k),p=dayPlan(d);
+  var pre='';
+  if(new Date()<START)pre='<div class="banner info" style="margin-top:12px">התוכנית מתחילה ביום ראשון 8.11. אפשר כבר לעבור על הימים ולבדוק את הקצבים.</div>';
+  var h=heroHTML()+pre+storageBanner()+tripBanner()+stripHTML()+lastCardHTML()+'<div class="dtitle"><h2>'+fmtDay(d)+'</h2><span class="small muted">'+(p.kind==='enlist'?'יום הגיוס':p.kind==='travel'?'יום נסיעה':p.kind==='rest'?'מנוחה':(sessList(p).length===1&&p.yoga)?'סשן יוגה':sessList(p).length===1?'אימון אחד':sessList(p).length+' אימונים')+'</span></div>';
+  if(p.kind==='enlist')return h+'<div class="card stack"><h3>יום הגיוס</h3><p style="margin:0">היום אין אימון. שותים הרבה מים, אוכלים ארוחה טובה ומגיעים רגועים. הבסיס שבנית ב-4 השבועות האחרונים נשאר איתך.</p></div>';
+  var chk='<div class="card" id="ci"><div class="ci-head"><div class="ring" id="ring"></div><div><div class="small muted">צ׳ק-אין</div><div class="zlabel" id="zl"></div><div class="small muted" id="zw"></div></div></div><div class="sliders">'+
+    slider('e','אנרגיה',1,10,1,c.e,'ריק','מלא')+
+    slider('sl','שינה בלילה האחרון',4,10,0.5,c.sl,'4 ש׳','10 ש׳',' ש׳')+
+    slider('s','כאב שרירים',0,10,1,c.s,'אין','חזק מאוד')+
+    slider('st','לחץ ועומס מנטלי',0,10,1,c.st,'רגוע','לחוץ')+
+    slider('p','כאב נקודתי',0,10,1,c.p,'אין','חד')+
+    '</div><div class="chips" id="pw" style="margin-top:10px;'+(c.p>0?'':'display:none')+'">'+['רגל','ברך','אכילס/קרסול','מפשעה','גב','כתף/מרפק','אחר'].map(function(x){return '<button class="chip" data-act="pw" data-v="'+x+'" aria-pressed="'+(c.pw===x)+'">'+x+'</button>';}).join('')+'</div>'+
+    '<div class="row" style="margin-top:12px"><button class="chip" data-act="alc" aria-pressed="'+c.alc+'">שתיתי אלכוהול אתמול</button></div></div>';
+  return h+'<div class="stack">'+chk+'<div id="dyn" class="stack"></div></div>';
+}
+function qviz(n,m,rest){
+  var W=300,wu=34,cd=26,gap=6,bw=(W-wu-cd-(n+1)*gap)/n,x=0,s='<svg class="viz" viewBox="0 0 300 70" role="img" aria-label="מבנה האימון">';
+  s+='<rect x="0" y="22" width="'+wu+'" height="14" rx="4" fill="var(--e)" opacity=".8"/>';x=wu+gap;
+  for(var i=0;i<n;i++){s+='<rect x="'+x.toFixed(1)+'" y="6" width="'+bw.toFixed(1)+'" height="38" rx="5" fill="var(--c)"/>';x+=bw+gap;}
+  s+='<rect x="'+(W-cd)+'" y="22" width="'+cd+'" height="14" rx="4" fill="var(--e)" opacity=".8"/>';
+  s+='<text x="'+(wu/2)+'" y="54" font-size="9" text-anchor="middle" fill="var(--muted)" stroke="none">חימום</text>';
+  s+='<text x="'+(W/2)+'" y="54" font-size="10" text-anchor="middle" fill="var(--muted)" stroke="none">'+n+'×'+m+' מ׳</text>';
+  s+='<text x="'+(W/2)+'" y="67" font-size="10" font-weight="700" text-anchor="middle" fill="var(--c)" stroke="none">מנוחה '+rest+' בין חזרות</text>';
+  s+='<text x="'+(W-cd/2)+'" y="54" font-size="9" text-anchor="middle" fill="var(--muted)" stroke="none">שחרור</text></svg>';
+  return s;
+}
+function dyn(){
+  var el=document.getElementById('dyn');if(!el)return;
+  var d=dateOf(viewKey),k=key(d),c=getCI(k),p=dayPlan(d),rd=readiness(c),dn=S.done[k]||{};
+  var circ=2*Math.PI*44,off=circ*(1-rd.score/100);
+  var ring=document.getElementById('ring');
+  ring.className='ring z-'+rd.zone;
+  ring.innerHTML='<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" stroke="var(--surface2)" stroke-width="9"/><circle class="v" cx="50" cy="50" r="44" stroke="var(--zc)" stroke-width="9" stroke-dasharray="'+circ.toFixed(1)+'" stroke-dashoffset="'+off.toFixed(1)+'"/></svg><div class="n">'+rd.score+'</div>';
+  var zl=document.getElementById('zl');zl.textContent=ZTXT[rd.zone];zl.parentNode.parentNode.className='ci-head z-'+rd.zone;
+  document.getElementById('zw').textContent=rd.why.length?'משפיע: '+rd.why.join(', '):'כל המדדים במצב טוב';
+  var h='';
+  if(c.alc&&d.getDay()===5&&p.runs.some(function(r){return r.id==='L';}))
+    h+='<div class="banner info row between"><span>שתית אתמול. מומלץ להעביר את הארוכה למחר.</span><button class="btn" data-act="movelong">העבר לשבת</button></div>';
+  if(c.alc&&p.runs.length)h+='<div class="banner info">אחרי אלכוהול: שותים לפחות ליטר וחצי מים לפני האימון. הדופק יהיה גבוה ב-5–10 פעימות מהרגיל, אז קובעים לפי תחושה.</div>';
+  if(p.note)h+='<div class="small muted">'+p.note+'</div>';
+  if(p.kind==='rest')h+='<section class="sess"><div class="sh"><div class="ico">'+IC.rest+'</div><div><div class="tag" style="color:var(--muted)">מנוחה</div><h3>יום התאוששות</h3></div><div></div></div><div class="sb"><div class="small muted">הליכה קלה, מתיחות ושינה. השרירים נבנים בזמן הזה.</div></div></section>';
+  if(p.kind==='travel')h+=travelCard(p);
+  var both=p.runs.length&&p.strs.length;
+  p.runs.forEach(function(r){h+=runCard(r,rd,c,dn,both?'בוקר':'',p);});
+  p.strs.forEach(function(s){h+=strCard(s,rd,c,dn,both?'ערב':'',p);});
+  if(p.yoga)h+=yogaCard(p.yoga,dn,p);
+  if(p.mob)h+=mobCard(dn,p.mob);
+  if(p.roll)h+=rollCard(dn,p.roll);
+  el.innerHTML=fb(h);
+}
+function runCard(r,rd,c,dn,when,p){
+  var mf=modeFor('run',rd,c,(r.id==='Q'&&p.carry)?'carry':''),mode=mf.mode,txt='';
+  if(mode==='red')txt='<b>'+(mf.msg?'':'מחליפים: ')+'</b>'+(mf.msg||r.r);
+  else if(mode==='yellow')txt='<b>מקלים:</b> '+(mf.msg?mf.msg+' ':'')+r.y;
+  var ad=mode?'<div class="adapt z-'+mode+'">'+txt+'</div>':'';
+  var dim=mode==='red';
+  var viz='';
+  if(r.q){var n=r.q.n;if(mode==='yellow')n=Math.max(2,n-(r.q.n>3?1:1));viz=qviz(n,r.q.m,r.q.rest);}
+  return '<section class="sess '+r.cls+'"><div class="sh"><div class="ico">'+IC[r.ic]+'</div><div><div class="tag">'+r.tag+'</div><h3 class="'+(dim?'struck':'')+'">'+r.title+'</h3></div><div class="when">'+when+'</div></div><div class="sb">'+ad+viz+
+   '<div class="stats'+(r.rest?' s4':'')+'"><div><b>'+r.pace+'</b><span>קצב לק״מ</span></div><div><b>'+r.hr+'</b><span>דופק</span></div>'+(r.rest?'<div><b>'+r.rest+'</b><span>מנוחה בין חזרות</span></div>':'')+'<div><b>'+r.km+'</b><span>ק״מ סה״כ</span></div></div>'+
+   '<ul class="steps '+(dim?'struck':'')+'">'+r.lines.map(function(l){return '<li><span>'+l+'</span></li>';}).join('')+'</ul>'+
+   whyHTML(whyOf(r,r.wi!=null?r.wi:p.wi))+logHTML(r,key(dateOf(viewKey)),r.wi!=null?r.wi:p.wi)+actRow(r,dn)+'</div></section>';
+}
+function whyOf(it,wi){return it.id==='Q'?WHY.Q[wi]:WHY[it.id];}
+function whyHTML(tx){return tx?'<details class="why"><summary>למה האימון הזה?</summary><p>'+tx+'</p></details>':'';}
+function ps(t){if(!t)return null;t=String(t).trim().replace(',','.');if(t.indexOf(':')<0){var m=parseFloat(t);return isNaN(m)?null:m*60;}var a=t.split(':').map(Number);if(a.some(isNaN))return null;return a.length===3?a[0]*3600+a[1]*60+a[2]:a[0]*60+a[1];}
+function pf(s){var m=Math.floor(s/60),x=Math.round(s%60);if(x===60){m++;x=0;}return m+':'+String(x).padStart(2,'0');}
+function prange(str){var m=String(str).match(/(\d+):(\d+)\D+(\d+):(\d+)/);return m?[+m[1]*60+ +m[2],+m[3]*60+ +m[4]]:null;}
+/* ---------- logging + coach ---------- */
+var FEEL=['קל','טוב','עבודה','קשה','התפרקתי'];
+var TIGHT=['ירכיים','שוקיים','גב תחתון','כתפיים','בסדר בכל מקום'];
+var LN={pyr1:'ווסט בפירמידה',wpu:'מתח עם משקל',wdip:'מקבילים עם משקל',ohp:'לחיצת כתפיים',row:'חתירה',sq:'סקוואט',rdl:'דדליפט רומני',bss:'לאנץ׳ בולגרי',stp:'עליות מדרגה',farm:'הליכון איכר',cln:'קלינים',ksw:'קטלבל סווינגס'};
+var openLogs={};
+function feelN(v){var i=FEEL.indexOf(v);return i<0?null:i+1;}
+function hs(s){var h=0;for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))>>>0;return h;}
+function pick(a,s){return a[hs(s)%a.length];}
+function hasData(v){var h=false;Object.keys(v||{}).forEach(function(x){if(v[x]!==''&&v[x]!=null)h=true;});return h;}
+function nz(x){var n=parseFloat(String(x==null?'':x).replace(',','.'));return isNaN(n)?null:n;}
+function hv(x){var n=nz(x);return(n!=null&&n>=60&&n<=220)?Math.round(n):null;}
+function pp(x){
+  if(x==null||x==='')return null;var s=String(x).trim().replace(',','.').replace(/[׳']/g,'');
+  var m=s.match(/^(\d{1,2})[:.](\d{2})$/);if(m){if(+m[2]>59)return null;var a=+m[1]*60+ +m[2];return(a>=150&&a<=900)?a:null;}
+  m=s.match(/^(\d)(\d{2})$/);if(m){if(+m[2]>59)return null;var b=+m[1]*60+ +m[2];return(b>=150&&b<=900)?b:null;}
+  return null;
+}
+function mean(a){return a.reduce(function(x,y){return x+y;},0)/a.length;}
+function sgn(n){return(n>0?'+':n<0?'−':'')+Math.abs(n);}
+function descDay(p){if(!p)return '';if(p.kind==='travel')return 'יום נסיעה';if(p.kind==='enlist')return 'יום הגיוס';var a=sessList(p).map(function(s){return NAMES[s.id]||s.id;});return a.length?a.join(' + '):'מנוחה';}
+function ctxOf(k){
+  var d=dateFromKey(k),off=offset(d),c={d:d,off:off,left:Math.round((END-d)/DAY),rd:null,alc:false,prevKm:0,prevQ:false,nextP:null,nextTxt:'',trip:off>=1&&off<=11,wk:0,wkPlan:0,wi:clamp(Math.floor(off/7),0,3),today:dayPlan(d)};
+  if(S.ci&&S.ci[k]){var ci=getCI(k);c.rd=readiness(ci);c.alc=!!ci.alc;}
+  if(off>0){var pk=key(dateOf(off-1)),pl=dayPlan(dateOf(off-1)),lg=S.log[pk]||{};Object.keys(lg).forEach(function(id){var x=nz(lg[id].km);if(x)c.prevKm+=x;});c.prevQ=pl.runs.some(function(r){return r.id==='Q';});}
+  if(off<LAST){c.nextP=dayPlan(dateOf(off+1));c.nextTxt=descDay(c.nextP);}
+  for(var i=0;i<7;i++){var o=c.wi*7+i;if(o>LAST)break;var l2=S.log[key(dateOf(o))];if(!l2)continue;Object.keys(l2).forEach(function(id){var x=nz(l2[id].km);if(x)c.wk+=x;});}
+  c.wkPlan=weekKm(c.wi);
+  return c;
+}
+function hasSess(p,ids){return p&&sessList(p).some(function(s){return ids.indexOf(s.id)>=0;});}
+function ctxLines(c,opt){
+  var o=[];
+  if(c.rd&&c.rd.zone!=='green')o.push('הצ׳ק-אין של אותו בוקר יצא '+(c.rd.zone==='yellow'?'צהוב':'אדום')+' ('+c.rd.score+')'+(c.rd.why.length?': '+c.rd.why.join(', '):'')+'. זה ברקע לאימון, וצריך לקרוא את הנתונים דרכו.');
+  if(c.alc)o.push('שתית ביום שלפני, וזה בדרך כלל מעלה את הדופק ב-5–10 פעימות ופוגע בהתאוששות.');
+  if(opt&&opt.prev&&c.prevKm>=9)o.push('יום קודם רצת '+c.prevKm.toFixed(1)+' ק״מ, כך שהרגליים לא הגיעו רעננות לאימון.');
+  if(c.trip&&c.off>=3&&c.off<=11)o.push('אתה בפיטסבורג והגוף עדיין מסתגל להפרש של 7 שעות, אז סטייה קטנה בקצב או בדופק לא מדאיגה.');
+  return o;
+}
+function weekLine(c){return c.wk>0?'השבוע עד עכשיו: '+c.wk.toFixed(1)+' ק״מ מתוך '+c.wkPlan+' מתוכננים, מתחת לתקרה של 40.':'';}
+function tomorrow(c,flag){
+  if(!c.nextP)return '';
+  var s='מחר: '+c.nextTxt+'.';
+  if(flag==='easy')s+=' כל ריצה קלה מחר צריכה להישאר באמת קלה: דופק עד 135 ובלי להרחיק מעבר לתוכנית.';
+  else if(flag==='legs'&&hasSess(c.nextP,['LG']))s+=' ברגליים תפתח בעומס קל ותכוון ל-RPE 7 ולא 8.';
+  else if(hasSess(c.nextP,['Q']))s+=' לפני איכות: שינה מוקדמת, מים, ובלי אלכוהול.';
+  else if(hasSess(c.nextP,['L']))s+=' לקראת הארוכה: ארוחת ערב עשירה בפחמימות ושינה מלאה.';
+  else s+=' לפי התוכנית.';
+  return s;
+}
+function mk(head,tone,P,next,extra,stat){return{head:head,tone:tone,P:P,next:next||'',extra:extra||'',stat:stat||''};}
+function worse(a,b){var r={good:0,ok:1,warn:2,bad:3};return r[b]>r[a]?b:a;}
+
+function repsViz(reps,lo,hi){
+  return '<div class="rv">'+reps.map(function(r){
+    var cl=r.p>hi+3?'slow':r.p<lo-3?'fast':'',lb=r.p>hi+3?'איטי ב-'+(r.p-hi):r.p<lo-3?'מהיר ב-'+(lo-r.p):'בטווח';
+    return '<div class="rc '+cl+'"><b>'+pf(r.p)+'</b><span>חזרה '+r.i+'</span>'+(r.h?'<span>דופק '+r.h+'</span>':'')+'<span>'+lb+'</span></div>';}).join('')+'</div>';
+}
+function coachQ(it,v,c,k,wi){
+  var q=it.q,n=q.n,rg=prange(it.pace)||[0,9999],lo=rg[0],hi=rg[1],L=S.lthr,reps=[],i,seed=k+'Q';
+  for(i=1;i<=n;i++){var p1=pp(v['p'+i]);if(p1)reps.push({i:i,p:p1,h:hv(v['h'+i])});}
+  var rpe=nz(v.rpe),fl=feelN(v.feel),hmax=hv(v.hmax),km=nz(v.km),legacy=false;
+  if(!reps.length){var rp=pp(v.rp);if(rp){reps=[{i:1,p:rp,h:hv(v.hr)}];legacy=true;}}
+  if(!reps.length){
+    var P0=['רשמת '+(rpe!=null?'RPE '+rpe:'את התחושה')+(km?' ו-'+km+' ק״מ':'')+', אבל בלי הקצבים של החזרות אין לי מה לנתח באמת. הכנס את הקצב של כל חזרה (גם בלי דופק) ואז אפרט.'];
+    if(fl&&fl>=4)P0.push('אם התחושה '+FEEL[fl-1]+', אל תכניס עוד איכות בימים הקרובים.');
+    return mk('חסרים לי הקצבים','ok',P0,tomorrow(c),'',km?km+' ק״מ':'');
+  }
+  var m=reps.length,pc=reps.map(function(r){return r.p;}),avg=mean(pc),first=pc[0],last=pc[m-1],mn=Math.min.apply(null,pc),mx=Math.max.apply(null,pc),spread=mx-mn,trend=last-first;
+  var slow=0,fast=0;pc.forEach(function(x){if(x>hi+3)slow++;else if(x<lo-3)fast++;});
+  var pat=legacy?'avg':(m<3?(Math.abs(trend)<=4?'even':trend<0?'neg':'fade'):(spread<=5?'even':(trend<=-6&&last<=mn+2)?'neg':(trend>=6?'fade':'ragged')));
+  var bigNeg=pat==='neg'&&spread>9,tone='good',head='',P=[],fastAvg=avg<lo-4,slowAvg=avg>hi+5;
+  if(legacy){head=fastAvg?'רצת מהר מדי':slowAvg?'האימון יצא איטי מהיעד':'קצב החזרות בתוך הטווח';tone=fastAvg||slowAvg?'ok':'good';}
+  else if(fastAvg){head='רצת מהר מהתוכנית';tone='warn';}
+  else if(slowAvg){head='האימון יצא איטי מהיעד';tone=avg>hi+12?'warn':'ok';}
+  else if(pat==='even'){head=slow+fast===0?pick(['ביצוע נקי, בדיוק איך שאימון כזה אמור להיראות','אחידות מעולה לאורך כל הסט'],seed):'אחיד, אבל בקצה הטווח';tone=slow+fast===0?'good':'ok';}
+  else if(pat==='neg'&&!bigNeg){head='פיצול שלילי מבוקר';tone='good';}
+  else if(bigNeg){head='חזק בסיום, אבל התחלה איטית מדי';tone='ok';}
+  else if(pat==='fade'){head='הקצב דעך לאורך הסט';tone='warn';}
+  else{head='חזרות לא אחידות';tone='ok';}
+  if(m<n&&!legacy){tone=worse(tone,'ok');}
+  /* paragraph 1: what happened */
+  var list=pc.map(pf).join(' · ');
+  var nrep=nz(v.reps);var s1=legacy?'קצב החזרות הממוצע '+pf(avg)+' מול יעד '+it.pace+(nrep!=null?'. ביצעת '+nrep+' מתוך '+n+' חזרות.':'.'):'החזרות יצאו '+list+', ממוצע '+pf(avg)+' מול יעד '+it.pace+(m<n?'. בוצעו '+m+' מתוך '+n+' חזרות.':'.');
+  if(!legacy){
+    if(fastAvg)s1+=' זה '+(lo-avg)+' שנ׳ מהר מהקצה המהיר של הטווח. בשבוע '+(wi+1)+' מהירות מעבר ליעד לא מוסיפה שיפור, רק עייפות שתרגיש בימים הקרובים.';
+    else if(slowAvg)s1+=' זה '+(avg-hi)+' שנ׳ איטי מהטווח. '+(rpe!=null&&rpe<=7?'אם הרגשת שיש עוד, בפעם הבאה אפשר לכוון לאמצע הטווח כבר מהחזרה הראשונה.':'אם הרגליים היו כבדות, זה בסדר גמור: עדיף איטי ומדויק מקצב שמתפרק.');
+    else if(pat==='even')s1+=' הפער בין החזרה המהירה לאיטית הוא '+spread+' שנ׳ בלבד'+(slow+fast===0?', וכל חזרה בתוך הטווח. זה בדיוק הגירוי האחיד שהאימון נועד לתת.':'. האחידות מצוינת, רק כדאי להזיז את הקצב לתוך הטווח.');
+    else if(pat==='neg'&&!bigNeg)s1+=' פיצול שלילי עדין של '+spread+' שנ׳ בין הראשונה לאחרונה: התחלת בשליטה, ובסוף היה עוד. כך מסיימים סט.';
+    else if(bigNeg)s1+=' פער של '+spread+' שנ׳ בין הראשונה ('+pf(first)+') לאחרונה ('+pf(last)+')'+(first>hi+3?'. הראשונה יצאה '+(first-hi)+' שנ׳ איטית מהטווח':'')+(last<lo-3?(first>hi+3?' והאחרונה ':'. האחרונה יצאה ')+(lo-last)+' שנ׳ מהר ממנו':'')+'. הממוצע מדויק, אבל הוא מסתיר חזרה ראשונה קלה מדי וחזרה אחרונה חזקה מדי, ולכן הגירוי לא היה אחיד.';
+    else if(pat==='fade')s1+=' הקצב דעך '+trend+' שנ׳ מהראשונה ('+pf(first)+') לאחרונה ('+pf(last)+'). זה בדרך כלל פתיחה מהירה מדי או עייפות מצטברת, והתיקון בשני המקרים הוא להתחיל בקצה האיטי של הטווח.';
+    else s1+=' הקצבים קפצו '+spread+' שנ׳ בלי מגמה ברורה. בפעם הבאה שווה להסתכל על קצב החזרה בשעון ולא רק על סוף כל ק״מ.';
+  }
+  P.push(s1);
+  /* paragraph 2: heart rate + effort */
+  var hsr=reps.filter(function(r){return r.h;}).map(function(r){return r.h;}),s2='';
+  if(hsr.length>=2){
+    var h1=hsr[0],h2=hsr[hsr.length-1],dr=h2-h1;
+    s2='הדופק עלה מ-'+h1+' בחזרה הראשונה ל-'+h2+' באחרונה ('+sgn(dr)+'). ';
+    if(dr>=20)s2+='זה סחף גדול: או שפתחת מהר מדי או שהמנוחה בין החזרות לא הספיקה להתאושש.';
+    else if(dr>=8)s2+='סחף רגיל לסט כזה. הגוף מצטבר עייפות בלי שהקצב נפגע, וזה סימן טוב.';
+    else s2+='דופק יציב לאורך הסט, סימן לכושר טוב ולקצב מבוקר.';
+    s2+=' בחזרה האחרונה הגעת ל-'+Math.round(h2/L*100)+'% מדופק הסף ('+L+').';
+    if(h1<0.9*L)s2+=' הדופק בחזרה הראשונה נמוך כי הוא מגיב באיחור לקצב, ולכן באימוני איכות סומכים קודם כל על הקצב.';
+  }else if(hsr.length===1)s2='דופק החזרה '+hsr[0]+', '+Math.round(hsr[0]/L*100)+'% מדופק הסף ('+L+').';
+  if(hmax){s2+=(s2?' ':'')+'שיא של '+hmax+(hmax>=L+8?', '+(hmax-L)+' מעל הסף. בסוף חזרה אחרונה זה מקובל, אבל לא כדאי להגיע לשם באמצע הסט.':'.');if(hmax>=L+14)tone=worse(tone,'warn');}
+  if(rpe!=null){
+    var rs='RPE '+rpe;
+    if(rpe>=9){rs+=': אימון קשה מאוד, ובשבוע '+(wi+1)+' זו לא המטרה.';tone=worse(tone,'warn');}
+    else if(rpe>=7.5)rs+=' מתאים לאימון של שבוע '+(wi+1)+'.';
+    else if(rpe<=6.5&&!slowAvg)rs+=' בקצב היעד: נשאר בטנק. אם זה חוזר באיכות הבאה, נקשיח.';
+    else rs+='.';
+    s2+=(s2?' ':'')+rs;
+  }
+  if(fl===5){tone='bad';s2+=(s2?' ':'')+'כתבת שהתפרקת. זה סימן לפרגן לגוף יום או יומיים, לא להיאבק בו.';}
+  else if(fl===4){tone=worse(tone,'warn');}
+  if(s2)P.push(s2);
+  /* paragraph 3: context */
+  var cl=ctxLines(c,{prev:(first>hi+3||pat==='fade')});
+  if(cl.length)P.push(cl.slice(0,2).join(' '));
+  /* next */
+  var flag=(tone==='warn'||tone==='bad'||(rpe!=null&&rpe>=9)||(hmax&&hmax>=L+12))?'easy':(rpe!=null&&rpe>=8.5?'legs':'');
+  var nx=[tomorrow(c,flag)];
+  if(wi<3){
+    var nq=QUAL[wi+1],tip;
+    if(bigNeg)tip='החזרה הראשונה צריכה להיכנס לטווח ולא לצאת איטית ממנו: מאריכים את החימום ב-5 דקות ומוסיפים סטרייד לפני. ובחזרה האחרונה לא מהר יותר מקצה הטווח המהיר.';
+    else if(pat==='fade'||fastAvg)tip='פותחים בקצה האיטי של הטווח ומחזיקים אותו, בלי "לנצח" את החזרה הראשונה.';
+    else if(slowAvg)tip='אם הגוף רענן, מכוונים לאמצע הטווח כבר מהחזרה הראשונה.';
+    else if(pat==='ragged')tip='לשמור קצב אחיד: להסתכל בשעון על הקצב הנוכחי בחזרה, לא רק בסופה.';
+    else tip='אותה גישה. אם ה-RPE נשאר עד 7, מותר להקשיח לקצה המהיר של הטווח בחזרה האחרונה בלבד.';
+    nx.push('האיכות הבאה (שבוע '+(wi+2)+'): '+nq.t+', יעד '+nq.pace+'. '+tip);
+  }else nx.push('זה האימון האחרון בסדרת האיכות לפני הגיוס. מכאן שומרים על רעננות.');
+  var stat=pf(avg)+' ממוצע'+(rpe!=null?' · RPE '+rpe:'');
+  return mk(head,tone,P,nx.join(' '),legacy?'':repsViz(reps,lo,hi),stat);
+}
+function coachRun(it,v,c,k,wi){
+  var km=nz(v.km),tm=ps(v.time),hr=hv(v.hr),rpe=nz(v.rpe),fl=feelN(v.feel),pace=(km>0&&tm)?tm/km:null,rg=prange(it.pace)||[0,9999];
+  var cap=(it.hr.match(/עד\s*(\d+)/)||[])[1];cap=cap?+cap:null;
+  var tone='good',P=[],seed=k+it.id,facts=[];
+  if(km!=null)facts.push('רצת '+km+' ק״מ');if(pace)facts.push('בקצב '+pf(pace));if(hr)facts.push((facts.length?'ובדופק ':'דופק ')+hr);
+  var s1=facts.length?facts.join(' ')+'. ':'';
+  if(km!=null){var ra=km/it.km;
+    if(ra<0.8){s1+='קיצרת מהתוכנית ('+it.km+' ק״מ). '+(fl&&fl>=4||(c.rd&&c.rd.zone!=='green')?'כשהגוף מבקש, זו החלטה נכונה.':'אם זה בגלל זמן ולא עייפות, אין בעיה.');if(fl&&fl>=4)tone=worse(tone,'ok');}
+    else if(ra>1.2){s1+='זה '+(km-it.km).toFixed(1)+' ק״מ מעל התוכנית. עם תקרה של 40 ק״מ בשבוע, ק״מ קלים מצטברים. כדאי להישאר בתוכנית.';tone=worse(tone,'ok');}
+    else s1+='המרחק תואם לתוכנית.';}
+  if(s1)P.push(s1.trim());
+  var s2='';
+  if(pace){
+    if(pace<rg[0]-10){s2+='הקצב מהיר מהטווח הקל ('+it.pace+'). ריצה קלה שרצים מהר מאטה את ההתאוששות לאימון הבא.';tone=worse(tone,'warn');}
+    else if(pace>rg[1]+25)s2+='הקצב איטי מהטווח, וזה בסדר גמור אם הדופק נמוך והגוף עייף.';
+    else s2+='הקצב בתוך הטווח.';}
+  if(cap&&hr){
+    if(hr>cap+3){s2+=(s2?' ':'')+'הדופק גבוה מהתקרה ('+cap+'): זו הייתה ריצה בינונית ולא קלה. בפעם הבאה מורידים קצב ולא מסתכלים על השעון.';tone=worse(tone,'warn');}
+    else s2+=(s2?' ':'')+'הדופק בתוך התקרה ('+cap+'). קל כמו שצריך.';}
+  if(rpe!=null&&rpe>=7){s2+=(s2?' ':'')+'RPE '+rpe+' גבוה לריצה קלה. כדאי לבדוק שינה, מים ואלכוהול ביממה האחרונה.';tone=worse(tone,'warn');}
+  else if(rpe!=null&&!s2)s2='RPE '+rpe+'.';
+  if(fl===5){tone='bad';s2+=(s2?' ':'')+'כתבת שהתפרקת, ובריצה קלה זה לא אמור לקרות. עצור לבדוק שינה, אכילה והאם משהו כואב.';}
+  else if(fl===4)tone=worse(tone,'warn');
+  if(s2)P.push(s2);
+  /* strides (E2 only) */
+  if(it.id==='E2'){
+    var sn=nz(v.sn),sp=pp(v.sp),sf=v.sf,parts=[];
+    if(sn!=null||sp||sf){
+      if(sn!=null)parts.push(sn>=5?'ביצעת את כל 5 המתגברות.':'ביצעת '+sn+' מתוך 5 מתגברות.');
+      if(sp){
+        if(sp<195){parts.push('הקצב '+pf(sp)+' מהיר מדי למתגברת. היא נועדה לקלילות, לא לספרינט: ב-20 שניות אתה אמור להרגיש שאתה נפתח ולא נלחם.');tone=worse(tone,'ok');}
+        else if(sp>220)parts.push('הקצב '+pf(sp)+' לא מגיע למהירות הרצויה (3:20–3:30). המטרה היא להזכיר לרגליים קצב מהיר, אז שווה להאיץ יותר בחצי השני של כל מתגברת.');
+        else parts.push('קצב המתגברות '+pf(sp)+' בדיוק בטווח (3:20–3:30). מתגברות כאלה שומרות על חדות בלי לעייף.');}
+      if(sf==='קלילים')parts.push('הן הרגישו קלילות, כלומר הרגליים מגיבות טוב אחרי הכוח.');
+      else if(sf==='כבדים'){parts.push('הן הרגישו כבדות. זה סימן לעייפות שנשארה מהכוח, לא דרמה, אבל כדאי לקצר את המתגברות בפעם הבאה ל-3.');tone=worse(tone,'ok');}
+      else if(sf==='משהו תפס'){parts.push('משהו תפס. אל תמשיך מתגברות ביומיים הקרובים, סמן כאב נקודתי בצ׳ק-אין והאפליקציה תתאים את האימונים. אם זה נמשך יותר משלושה ימים, כדאי לבדוק עם פיזיותרפיסט.');tone='bad';}
+      P.push('<b>המתגברות:</b> '+parts.join(' '));
+    }else P.push('לא תיעדת את המתגברות. מספיק לרשום כמה ביצעת ואיך הרגישו, ואתן עליהן פידבק.');
+  }
+  var cl=ctxLines(c,{prev:false});if(cl.length)P.push(cl[0]);
+  var wl=weekLine(c);if(wl)P.push(wl);
+  var head=tone==='good'?pick(['ריצה קלה כמו שצריך','קל ונקי, בדיוק מה שהתוכנית ביקשה','ריצה קלה מדויקת'],seed):tone==='ok'?'ריצה סבירה, עם הערה קטנה':tone==='warn'?'הריצה הקלה לא הייתה קלה':'שים לב לגוף';
+  var flag=(tone==='warn'||tone==='bad')?'easy':'';
+  var stat=(km!=null?km+' ק״מ':'')+(pace?' · '+pf(pace):'')+(hr?' · '+hr:'');
+  return mk(head,tone,P,tomorrow(c,flag),'',stat.replace(/^ · /,''));
+}
+function coachStr(it,v,c,k,wi){
+  var rpe=nz(v.rpe),dur=nz(v.dur),fl=feelN(v.feel),tone='good',P=[],seed=k+it.id;
+  var rs=it.ex.filter(function(e){return typeof e.rpe==='number';}).map(function(e){return e.rpe;}),tr=rs.length?mean(rs):null;
+  var s1='';
+  if(rpe!=null&&tr){var df=rpe-tr;
+    if(df>=1.5){s1='RPE '+rpe+' מול יעד של כ-'+tr.toFixed(1)+': האימון יצא כבד מהמתוכנן. בפעם הבאה מורידים כ-5% מהמשקל בתרגילי הבסיס או סט אחד, ולא מסיימים בכשל.';tone='warn';}
+    else if(df<=-1.5){s1='RPE '+rpe+' מול יעד של כ-'+tr.toFixed(1)+': קל מהמתוכנן, יש לך רזרבה. אפשר להוסיף 2.5 ק״ג בתרגילי הבסיס או חזרה בסט האחרון.';}
+    else s1='RPE '+rpe+' מול יעד של כ-'+tr.toFixed(1)+': העומס מכוון נכון.';}
+  else if(rpe!=null)s1='RPE '+rpe+'.';
+  if(dur!=null){var ds=dur>60?'האימון נמשך '+dur+' דק׳, מעבר לגג של 60. מקצרים את המנוחות בתרגילי העזר ולא את הסטים המרכזיים.':dur<it.min*0.65?'האימון נמשך רק '+dur+' דק׳ מתוך כ-'+it.min+' מתוכננות. ודא שלא ויתרת על סטים.':'משך '+dur+' דק׳, בתוך המסגרת.';
+    if(dur>60)tone=worse(tone,'ok');s1+=(s1?' ':'')+ds;}
+  if(s1)P.push(s1);
+  var ups=[],downs=[],base=[],miss=0,cnt=0;
+  it.ex.forEach(function(e){if(!e.load)return;cnt++;var cur=S.load[e.id]&&S.load[e.id][wi];if(cur==null||cur===''){miss++;return;}var pv=lastLoad(e.id,wi),nm=LN[e.id]||e.n;
+    if(pv==null)base.push(nm+' '+cur);else if(cur>pv)ups.push(nm+' ('+pv+'→'+cur+')');else if(cur<pv)downs.push(nm+' ('+pv+'→'+cur+')');});
+  var s2='';
+  if(ups.length)s2+='עלית ב-'+ups.join(', ')+'. ';
+  if(downs.length){s2+='ירדת ב-'+downs.join(', ')+'. ירידה במשקל היא סימן לבדוק שינה, מים והאם יש כאב. ';tone=worse(tone,'ok');}
+  if(base.length)s2+='משקלי בסיס שנקבעו: '+base.join(', ')+'. בשבוע הבא נוסיף עליהם כשהחזרות נקיות ב-RPE הנכון. ';
+  if(cnt&&miss===cnt)s2+='לא הזנת משקלים. בלעדיהם אין לי על מה להתבסס כשאני אומר לך מה להעלות בשבוע הבא.';
+  else if(miss>0&&(ups.length||downs.length||base.length))s2+='חסרים משקלים ל-'+miss+' תרגילים.';
+  if(s2)P.push(s2.trim());
+  if(fl===5){tone='bad';P.push('כתבת שהתפרקת. שווה לוותר על העלאת משקל בשבוע הבא ולבדוק שינה והאכלה.');}
+  else if(fl===4)tone=worse(tone,'warn');
+  var sp=[];
+  if(it.id==='U1'&&hasSess(c.today,['Q']))sp.push('אחרי איכות בבוקר, פירמידה בערב היא הסדר הנכון: הגב והידיים לא קשורים לרגליים שעבדו.');
+  if(it.id==='LG'&&hasSess(c.nextP,['Q','L']))sp.push('רגליים כבדות לפני '+(hasSess(c.nextP,['Q'])?'איכות':'ריצה ארוכה')+' מחר. חשוב לישון, לאכול ולא להוסיף כלום.');
+  var cl=ctxLines(c,{prev:false});sp=sp.concat(cl.slice(0,1));
+  if(sp.length)P.push(sp.join(' '));
+  var head=tone==='good'?pick(['אימון כוח מדויק','בדיוק בעומס שתוכנן','אימון כוח טוב'],seed):tone==='ok'?'אימון טוב, עם נקודה לשיפור':tone==='warn'?'האימון יצא כבד מהתוכנית':'שים לב לגוף';
+  var flag=it.id==='LG'||it.id==='AT'?'':'';
+  var stat=(dur!=null?dur+' דק׳':'')+(rpe!=null?(dur!=null?' · ':'')+'RPE '+rpe:'');
+  return mk(head,tone,P,tomorrow(c,tone==='warn'||tone==='bad'?'easy':'legs'),'',stat);
+}
+function coachYoga(it,v,c,k,wi){
+  var dur=nz(v.dur),tg=v.tight,fl=feelN(v.feel),P=[],tone='good',seed=k+'YG';
+  var s1=dur!=null?(dur>=it.min*0.8?'עשית '+dur+' דק׳ מתוך '+it.min+' מתוכננות, מה שמספיק לשינוי אמיתי בטווח התנועה.':'עשית '+dur+' דק׳ מתוך '+it.min+'. גם זה נחשב, אבל סשן שלם מעמיק את הפתיחה.'):'סשן היוגה נרשם.';
+  if(dur!=null&&dur<it.min*0.8)tone='ok';
+  P.push(s1);
+  var map={'ירכיים':'הירכיים הכי מתוחות. בפעם הבאה מוסיפים דקה לפסואס וליונה, ובימי ריצה קלה עושים 60 שנ׳ פסואס לכל צד לפני.','שוקיים':'השוקיים הכי מתוחות, וזה אופייני לרץ. מוסיפים כלב מביט מטה עם דריכה גם אחרי ריצות קלות, ושוקיים בגלגול ביום רביעי.','גב תחתון':'הגב התחתון מתוח. חתול-פרה ותנוחת ילד של 2 דקות בבוקר יעזרו, ולפני הרמות כבדות שווה חימום נוסף. אם זה מלווה בכאב, סמן בצ׳ק-אין.','כתפיים':'הכתפיים הכי מתוחות, כנראה מהמתח והמקבילים. אחרי כל אימון כוח עליון עושים דקה של פתיחת חזה על דלת.','בסדר בכל מקום':'אין מקום מתוח במיוחד, סימן שהגוף מתאושש טוב בשבוע הזה.'};
+  if(tg&&map[tg]){P.push(map[tg]);if(tg==='גב תחתון')tone=worse(tone,'ok');}
+  if(fl===4||fl===5)P.push('כתבת שהסשן הרגיש '+FEEL[fl-1]+'. ביוגה זה לרוב סימן לעייפות כללית, אז הקדם שינה ושתייה לפני יום ראשון.');
+  var wl=weekLine(c);if(wl)P.push(wl);
+  var head=tone==='good'?pick(['סשן התאוששות טוב','הגוף קיבל את מה שהוא צריך'],seed):'סשן טוב, שווה להעמיק בפעם הבאה';
+  return mk(head,tone,P,tomorrow(c,''),'',dur!=null?dur+' דק׳':'');
+}
+function coachFor(it,k,wi){
+  var v=(S.log[k]&&S.log[k][it.id])||{};
+  if(!hasData(v))return null;
+  var c=ctxOf(k);
+  try{
+    if(it.kind==='run')return it.q?coachQ(it,v,c,k,wi):coachRun(it,v,c,k,wi);
+    if(it.kind==='yoga')return coachYoga(it,v,c,k,wi);
+    return coachStr(it,v,c,k,wi);
+  }catch(e){return mk('נרשם','ok',['הנתונים נשמרו. לא הצלחתי לנתח אותם כרגע, ואפשר לשלוח לי אותם בצ׳אט לניתוח.'],'');}
+}
+function coachBody(cf){
+  return '<div class="chead"><span class="cdot"></span><b>'+cf.head+'</b></div>'+cf.extra+cf.P.map(function(x){return '<p>'+x+'</p>';}).join('')+(cf.next?'<div class="cnext"><b>מכאן והלאה</b><p>'+cf.next+'</p></div>':'')+'<div class="cm">לניתוח עמוק יותר מ-Garmin (פיצולים, דופק לאורך הזמן), כתוב לי בצ׳אט "תנתח".</div>';
+}
+function analysisHTML(it,k,wi){
+  var cf=coachFor(it,k,wi);
+  if(!cf)return '<div class="an"><b>המאמן</b><span>מלא את הנתונים ותקבל ממני ניתוח כמו שמאמן היה נותן אחרי האימון. אפשר גם רק חלק מהשדות.</span></div>';
+  return '<div class="coach tone-'+cf.tone+'">'+coachBody(cf)+'</div>';
+}
+function chipsHTML(sid,field,opts,cur){
+  return '<div class="chips">'+opts.map(function(o){return '<button type="button" class="chip" data-act="lchip" data-sid="'+sid+'" data-f="'+field+'" data-v="'+o+'" aria-pressed="'+(cur===o)+'">'+o+'</button>';}).join('')+'</div>';
+}
+function logHTML(it,k,wi){
+  var v=(S.log[k]&&S.log[k][it.id])||{},op=hasData(v)||openLogs[k+'|'+it.id];
+  function f(name,label,attrs){return '<label>'+label+'<input data-log="'+name+'" data-sid="'+it.id+'" value="'+(v[name]!=null?String(v[name]).replace(/"/g,''):'')+'" '+attrs+'></label>';}
+  var g='',x='';
+  if(it.kind==='run'&&it.q){
+    var rows='<div class="rr rh"><span></span><span>קצב לק״מ</span><span>דופק ממוצע</span></div>';
+    for(var i=1;i<=it.q.n;i++)rows+='<div class="rr"><i>'+i+'</i><input data-log="p'+i+'" data-sid="'+it.id+'" value="'+(v['p'+i]!=null?String(v['p'+i]).replace(/"/g,''):'')+'" placeholder="3:50" inputmode="text" aria-label="קצב חזרה '+i+'"><input data-log="h'+i+'" data-sid="'+it.id+'" value="'+(v['h'+i]!=null?String(v['h'+i]).replace(/"/g,''):'')+'" placeholder="165" inputmode="numeric" aria-label="דופק חזרה '+i+'"></div>';
+    g='<div class="lsub">חזרות ('+it.q.n+' מתוכננות). הכנס את הקצב לכל חזרה, והדופק אם יש</div><div class="rps">'+rows+'</div><div class="lgrid">'+f('rpe','RPE (1–10)','inputmode="decimal" placeholder="8"')+f('hmax','דופק מקסימלי','inputmode="numeric" placeholder="180"')+f('km','ק״מ כולל חימום ושחרור','inputmode="decimal" placeholder="'+it.km+'"')+'</div><div class="lsub">סיכום כללי (אם אין לך נתונים לכל חזרה)</div><div class="lgrid">'+f('reps','חזרות שבוצעו','inputmode="numeric" placeholder="'+it.q.n+'"')+f('rp','קצב חזרות ממוצע','placeholder="3:50"')+f('hr','דופק ממוצע בחזרות','inputmode="numeric" placeholder="165"')+f('time','זמן כולל (דק׳:שנ׳)','placeholder="45:00"')+'</div>';
+    x='<div class="lsub">איך הרגשת?</div>'+chipsHTML(it.id,'feel',FEEL,v.feel);
+  }else if(it.kind==='run'){
+    g='<div class="lgrid">'+f('km','ק״מ שרצת','inputmode="decimal" placeholder="'+it.km+'"')+f('time','זמן כולל (דק׳:שנ׳)','placeholder="40:00"')+f('hr','דופק ממוצע','inputmode="numeric" placeholder="140"')+f('rpe','RPE (1–10)','inputmode="decimal" placeholder="6"')+'</div>';
+    if(it.id==='E2')g+='<div class="lsub">מתגברות (סטרייד)</div><div class="lgrid">'+f('sn','כמה ביצעת (מתוך 5)','inputmode="numeric" placeholder="5"')+f('sp','קצב ממוצע במתגברת','placeholder="3:25"')+'</div><div class="fchips">'+chipsHTML(it.id,'sf',['קלילים','כבדים','משהו תפס'],v.sf)+'</div>';
+    x='<div class="lsub">איך הרגשת?</div>'+chipsHTML(it.id,'feel',FEEL,v.feel);
+  }else if(it.kind==='yoga'){
+    g='<div class="lgrid">'+f('dur','משך (דק׳)','inputmode="numeric" placeholder="'+it.min+'"')+'</div><div class="lsub">איפה הכי מתוח?</div>'+chipsHTML(it.id,'tight',TIGHT,v.tight);
+    x='<div class="lsub">איך הרגשת?</div>'+chipsHTML(it.id,'feel',FEEL,v.feel);
+  }else{
+    g='<div class="lgrid">'+f('dur','משך (דק׳)','inputmode="numeric" placeholder="'+it.min+'"')+f('rpe','RPE ממוצע (1–10)','inputmode="decimal" placeholder="7"')+'</div>';
+    x='<div class="lsub">איך הרגשת?</div>'+chipsHTML(it.id,'feel',FEEL,v.feel);
+  }
+  return '<details class="log" data-lk="'+k+'|'+it.id+'"'+(op?' open':'')+'><summary>תיעוד וניתוח'+(hasData(v)?' · נשמר':'')+'</summary><div class="lg">'+g+x+'<div id="an-'+it.id+'">'+analysisHTML(it,k,wi)+'</div></div></details>';
+}
+/* ---------- history + last workout ---------- */
+function logEntries(){
+  var res=[];
+  for(var o=LAST;o>=0;o--){
+    var d=dateOf(o),k=key(d),lg=S.log[k],dn=S.done[k]||{},p=dayPlan(d),seen={};
+    sessList(p).forEach(function(it){var v=lg&&lg[it.id];if(hasData(v)||dn[it.id]){seen[it.id]=1;res.push({k:k,d:d,it:it,v:v||{},wi:it.wi!=null?it.wi:p.wi,done:!!dn[it.id]});}});
+    if(lg)Object.keys(lg).forEach(function(id){if(!seen[id]&&hasData(lg[id]))res.push({k:k,d:d,it:{id:id,title:NAMES[id]||id,kind:'x',cls:'s'},v:lg[id],wi:p.wi,orphan:true});});
+  }
+  return res;
+}
+function entryCoach(e){return e.orphan?null:coachFor(e.it,e.k,e.wi);}
+function tagCls(it){return it.cls==='q'?'var(--q)':it.cls==='e'?'var(--e)':it.cls==='l'?'var(--l)':it.cls==='y'?'var(--y)':'var(--s)';}
+function logTabHTML(){
+  var E=logEntries(),kmT=0,rp=[],n=0,i;
+  E.forEach(function(e){if(hasData(e.v)){n++;var x=nz(e.v.km);if(x)kmT+=x;var r=nz(e.v.rpe);if(r!=null)rp.push(r);}});
+  var h='<div class="stack"><h2 style="margin-top:6px">יומן אימונים</h2><div class="card stack"><div class="kpis"><div><b>'+n+'</b><span>אימונים עם תיעוד</span></div><div><b>'+kmT.toFixed(1)+'</b><span>ק״מ שתועדו</span></div><div><b>'+(rp.length?mean(rp).toFixed(1):'—')+'</b><span>RPE ממוצע</span></div></div><div class="small muted">כל מה שהכנסת נשמר כאן, עם הניתוח של כל אימון. אפשר לחזור אליו בכל עת.</div></div>';
+  if(!E.length)return h+'<div class="card small muted">עוד אין אימונים בתיעוד. אחרי אימון, פותחים את "תיעוד וניתוח" בכרטיס שלו ומקבלים ניתוח.</div></div>';
+  var cur='',first=true;
+  E.forEach(function(e){
+    if(e.k!==cur){if(cur)h+='</div>';cur=e.k;h+='<div class="dgroup"><h3>'+fmtDay(e.d)+'</h3>';}
+    var cf=entryCoach(e),stat=cf?cf.stat:(e.done&&!hasData(e.v)?'בוצע':'');
+    h+='<details class="hist" style="--c:'+tagCls(e.it)+'"'+(first&&cf?' open':'')+'><summary><span class="hd"></span><span class="ht"><b>'+titleOfIt(e.it)+'</b><span>'+(cf?cf.head:(e.done?'סומן כבוצע, בלי נתונים':'נרשם'))+'</span></span><span class="hs">'+stat+'</span></summary>'+(cf?'<div class="hb"><div class="coach tone-'+cf.tone+'">'+coachBody(cf)+'</div></div>':'')+'</details>';
+    if(cf)first=false;
+  });
+  return fb(h+'</div></div>');
+}
+function lastCardHTML(){
+  var E=logEntries().filter(function(e){return hasData(e.v)&&!e.orphan;});
+  if(!E.length)return '';
+  var e=E[0],cf=entryCoach(e);if(!cf)return '';
+  var n=new Date(),tk=offset(new Date(n.getFullYear(),n.getMonth(),n.getDate(),12)),fresh=offset(e.d)>=tk-1;
+  return '<details class="card lastw coach tone-'+cf.tone+'" style="margin-top:14px;padding:12px 14px"'+(fresh?' open':'')+'><summary><span class="cdot"></span><span class="lt"><small>האימון האחרון · '+fmtDay(e.d)+'</small><b>'+titleOfIt(e.it)+': '+cf.head+'</b></span></summary><div class="lb stack" style="gap:9px">'+cf.extra+cf.P.map(function(x){return '<p style="margin:0">'+x+'</p>';}).join('')+(cf.next?'<div class="cnext"><b>מכאן והלאה</b><p style="margin:0">'+cf.next+'</p></div>':'')+'<div class="small muted">הניתוח המלא של כל האימונים נמצא בלשונית "יומן".</div></div></details>';
+}
+function fmtShort(k){var d=dateFromKey(k);return 'יום '+WD[d.getDay()]+' '+d.getDate()+'.'+(d.getMonth()+1);}
+function actRow(it,dn){
+  var mv=it.moved?'<div class="mvnote">הוזז מ'+fmtShort(it.from)+'<button class="lnk" data-act="mvback" data-id="'+it.id+'" data-from="'+it.from+'">החזר למקום המקורי</button></div>':'';
+  return mv+'<div class="row between"><label class="done"><input type="checkbox" data-act="done" data-v="'+it.id+'" '+(dn[it.id]?'checked':'')+'>בוצע</label><button class="chip" data-act="mv" data-id="'+it.id+'" data-from="'+it.from+'">הזז ליום אחר</button></div>';
+}
+function yogaCard(y,dn,p){
+  var rows=y.poses.map(function(q){return '<div class="ex"><div class="exh"><div class="exn">'+q.n+'</div><div class="exs yt">'+q.t+'</div></div><div class="exm"><span class="pill rest">מנוחה '+q.r+'</span></div>'+(q.c?'<div class="cue">'+q.c+'</div>':'')+'</div>';}).join('');
+  var wi=y.wi!=null?y.wi:p.wi;
+  return '<section class="sess y"><div class="sh"><div class="ico">'+IC.y+'</div><div><div class="tag">'+y.tag+'</div><h3>'+y.title+'</h3></div><div class="when">כ-'+y.min+' דק׳</div></div><div class="sb">'+
+   (y.after?'<div class="adapt z-green"><b>אחרי ריצה ארוכה:</b> רק 70% מהמתיחה בכל תנוחה, בלי להגיע לקצה, ובסוף 5 דקות עם הרגליים על הקיר.</div>':'')+
+   '<div class="prog">'+y.focus+'</div><div class="stack" style="gap:10px">'+rows+'</div>'+whyHTML(WHY.YG)+logHTML(y,key(dateOf(viewKey)),wi)+actRow(y,dn)+'</div></section>';
+}
+/* ---------- week check + moves ---------- */
+function warnList(){
+  var P=composed(),W=[];
+  function T(p){var t={Q:0,L:0,U1:0,U2:0,LG:0,AT:0,n:0};sessList(p).forEach(function(s){if(t[s.id]!=null)t[s.id]=1;if(s.id!=='MOB'&&s.id!=='ROLL'&&s.id!=='YG')t.n++;});return t;}
+  for(var i=0;i<=LAST;i++){
+    var t=T(P[i]),dk=key(P[i].d),u=i<LAST?T(P[i+1]):null,dl=fmtDay(P[i].d);
+    if(t.U1&&t.U2)W.push({k:'uu0|'+dk,t:'שני אימוני פלג גוף עליון באותו יום ('+dl+').'});
+    if(u&&((t.U1&&u.U2)||(t.U2&&u.U1)))W.push({k:'uu1|'+dk,t:'פירמידה ופלג גוף עליון ביומיים רצופים ('+dl+' והיום שאחריו). הידיים והחזה לא מספיקים להתאושש.'});
+    if(t.LG&&(t.Q||t.L))W.push({k:'lq0|'+dk,t:'רגליים כבדות באותו יום עם '+(t.Q?'ריצת איכות':'הריצה הארוכה')+' ('+dl+').'});
+    if(u&&t.LG&&(u.Q||u.L))W.push({k:'lq1|'+dk,t:'רגליים כבדות ב'+dl+', יום לפני '+(u.Q?'ריצת איכות':'הריצה הארוכה')+'. הרגליים לא יהיו רעננות.'});
+    if(u&&t.Q&&u.LG)W.push({k:'ql1|'+dk,t:'רגליים כבדות מיד אחרי ריצת איכות ('+dl+' והיום שאחריו). עדיף רווח של יומיים.'});
+    if(t.Q&&t.L)W.push({k:'ql0|'+dk,t:'איכות וריצה ארוכה באותו יום ('+dl+').'});
+    if(u&&((t.Q&&u.L)||(t.L&&u.Q)))W.push({k:'ql2|'+dk,t:'ריצת איכות וריצה ארוכה ביומיים רצופים ('+dl+' והיום שאחריו). הארוכה תבוא עם רגליים עייפות.'});
+    if(u&&t.AT&&u.Q)W.push({k:'aq1|'+dk,t:'אתלטיקה ב'+dl+', יום לפני ריצת איכות. קלינים וברפיז מעייפים את הרגליים.'});
+    if(t.n>=3)W.push({k:'busy|'+dk,t:'יום עמוס: '+t.n+' אימונים ב'+dl+'.'});
+  }
+  return W;
+}
+function warnWith(pl){var old=S.place;S.place=pl;_pc=null;var w=warnList();S.place=old;_pc=null;return w;}
+function itemOn(dk,id){var p=dayPlan(dateFromKey(dk));return sessList(p).filter(function(x){return x.id===id;})[0];}
+function titleOfIt(it){return it.title||NAMES[it.id]||it.id;}
+function migrate(id,a,b){['log','done'].forEach(function(f){var s=S[f];if(s[a]&&s[a][id]!=null){s[b]=s[b]||{};s[b][id]=s[a][id];delete s[a][id];if(!Object.keys(s[a]).length)delete s[a];}});}
+function setPlace(np,it,to){var kk=it.from+':'+it.id;if(to===it.from)delete np[kk];else np[kk]=to;}
+var mvS=null;
+function openMove(id,from){mvS={id:id,from:from,cur:key(dateOf(viewKey)),stage:'pick',wk:clamp(Math.floor(viewKey/7),0,3)};drawSheet();}
+function movePlan(m){
+  var it=itemOn(m.cur,m.id);if(!it)return null;
+  var np=Object.assign({},S.place||{}),ops=[];
+  setPlace(np,it,m.to);ops.push([it.id,m.cur,m.to]);
+  if(m.swap){var x=itemOn(m.to,m.swap);if(!x)return null;setPlace(np,x,m.cur);ops.push([x.id,m.to,m.cur]);}
+  return{np:np,ops:ops,it:it};
+}
+function drawSheet(){
+  var el=document.getElementById('sheet');if(!el)return;
+  if(!mvS){el.hidden=true;el.innerHTML='';return;}
+  var m=mvS,it=itemOn(m.cur,m.id);
+  if(!it){mvS=null;el.hidden=true;return;}
+  var h='<div class="sheetc" role="dialog" aria-modal="true"><div class="row between"><h3>הזזת '+titleOfIt(it)+'</h3><button class="chip" data-act="mvclose">סגור</button></div>';
+  var today=(function(){var n=new Date();return offset(new Date(n.getFullYear(),n.getMonth(),n.getDate(),12));})();
+  if(m.stage==='pick'){
+    h+='<div class="small muted">בחר יום חדש. הזזה חופשית, והאפליקציה תבדוק את השבוע ותזהיר אם נוצר מבנה גרוע.</div><div class="chips">'+WEEKS.map(function(w,i){return '<button class="chip" data-act="mvwk" data-v="'+i+'" aria-pressed="'+(i===m.wk)+'">שבוע '+w.n+'</button>';}).join('')+'</div><div class="stack" style="gap:8px">';
+    for(var i=0;i<7;i++){var o=m.wk*7+i;if(o>LAST)break;var d=dateOf(o),dk=key(d),p=dayPlan(d);
+      var blocked=p.kind==='travel'||p.kind==='enlist'||o<today||dk===m.cur;
+      var why=p.kind==='travel'?'יום נסיעה':p.kind==='enlist'?'יום הגיוס':o<today?'עבר':dk===m.cur?'היום הנוכחי של האימון':'';
+      var has=sessList(p).some(function(x){return x.id===m.id;});
+      if(has&&!blocked){blocked=true;why='כבר יש כאן אימון מאותו סוג';}
+      h+='<button class="dayrow'+(dk===m.cur?' cur':'')+'" data-act="mvday" data-v="'+dk+'" '+(blocked?'disabled':'')+'><span class="dd">'+d.getDate()+'.'+(d.getMonth()+1)+'<small>'+WD[d.getDay()]+'</small></span><span class="dc">'+descDay(p)+(why?'<em>'+why+'</em>':'')+'</span></button>';}
+    h+='</div>';
+  }else if(m.stage==='opt'){
+    var p2=dayPlan(dateFromKey(m.to)),ex=sessList(p2);
+    h+='<div class="small muted">'+fmtShort(m.to)+' כבר מכיל: '+descDay(p2)+'. מה לעשות?</div><button class="optb" data-act="mvopt" data-v="add">להוסיף את '+titleOfIt(it)+' ליום הזה</button>';
+    ex.forEach(function(x){var clash=sessList(dayPlan(dateFromKey(m.cur))).some(function(y2){return y2.id===x.id&&y2.id!==m.id;});h+='<button class="optb" data-act="mvopt" data-v="'+x.id+'" '+(clash?'disabled':'')+'>להחליף עם '+titleOfIt(x)+' (הוא יעבור ל'+fmtShort(m.cur)+')</button>';});
+    h+='<button class="chip" data-act="mvstage" data-v="pick">חזרה לבחירת יום</button>';
+  }else{
+    var mp=movePlan(m);
+    if(!mp){mvS=null;el.hidden=true;return;}
+    var before=warnList().map(function(w){return w.k;}),after=warnWith(mp.np),fresh=after.filter(function(w){return before.indexOf(w.k)<0;});
+    h+='<div class="small muted">'+titleOfIt(it)+': '+fmtShort(m.cur)+' ← '+fmtShort(m.to)+(m.swap?' (והחלפה עם '+titleOfIt(itemOn(m.to,m.swap))+')':'')+'</div>';
+    if(fresh.length)h+='<div class="banner"><b>שים לב:</b><ul class="wl steps" style="--c:var(--warn);margin-top:6px">'+fresh.map(function(w){return '<li><span>'+w.t+'</span></li>';}).join('')+'</ul></div>';
+    else h+='<div class="banner info">המבנה של השבוע נשאר תקין אחרי ההזזה.</div>';
+    h+='<button class="btn" data-act="mvok">'+(fresh.length?'להזיז בכל זאת':'אישור הזזה')+'</button><button class="chip" data-act="mvstage" data-v="pick">בחירת יום אחר</button>';
+  }
+  el.innerHTML=fb(h+'</div>');el.hidden=false;
+}
+function toast(msg){var el=document.getElementById('toast');if(!el)return;el.textContent=msg;el.hidden=false;clearTimeout(toast._t);toast._t=setTimeout(function(){el.hidden=true;},2600);}
+function planCheckHTML(){
+  var w=warnList();
+  return '<div class="card stack"><h3>בדיקת התוכנית</h3>'+(w.length?'<ul class="wl steps" style="--c:var(--warn)">'+w.map(function(x){return '<li><span>'+x.t+'</span></li>';}).join('')+'</ul><div class="small muted">אלה רק אזהרות. אתה מחליט, וכל אימון אפשר להחזיר למקום המקורי מתוך הכרטיס שלו.</div>':'<div class="small muted">כל השבועות בנויים נכון: אין פלג עליון ברצף, אין רגליים לפני איכות או ארוכה, ואין יום עמוס מדי.</div>')+'</div>';
+}
+function travelCard(p){
+  var out=p.travel==='out';
+  var tips=out?['בלי אימון היום. הליכה קלה בשדה ובנחיתה.','שותים הרבה מים וקמים ללכת כל שעה-שעתיים בטיסה.','עוברים לשעון פיטסבורג כבר בטיסה: 7 שעות אחרי ישראל.','בבוקר הראשון יוצאים לאור יום, זה מזיז את השעון הביולוגי.']:['בלי אימון בנסיעה. הליכה קלה והרבה מים.','לא מרימים כבד ביום הנחיתה.','עוברים לשעון ישראל מהרגע שעולים למטוס.'];
+  return '<section class="sess"><div class="sh"><div class="ico">'+IC.plane+'</div><div><div class="tag" style="color:var(--accent-text)">יום נסיעה</div><h3>'+(out?'טסים לארה״ב':'חוזרים לישראל')+'</h3></div><div></div></div><div class="sb"><ul class="steps" style="--c:var(--accent)">'+tips.map(function(x){return '<li><span>'+x+'</span></li>';}).join('')+'</ul></div></section>';
+}
+function rollCard(dn,it){
+  return '<section class="sess s"><div class="sh"><div class="ico">'+IC.rest+'</div><div><div class="tag">התאוששות</div><h3>גלגול רגליים</h3></div><div class="when">10–15 דק׳</div></div><div class="sb"><ul class="steps"><li><span>ירך קדמית: 60 שנ׳ לכל רגל</span></li><li><span>שוק: 60 שנ׳ לכל רגל</span></li><li><span>ירך אחורית: 60 שנ׳ לכל רגל</span></li><li><span>עכוז ופס אילאוטיביאלי: 45 שנ׳ לכל צד</span></li><li><span>מעבר בין תרגילים: 15 שנ׳</span></li><li><span>בסוף 5 דקות הליכה קלה</span></li></ul>'+whyHTML(WHY.ROLL)+actRow(it,dn)+'</div></section>';
+}
+function summaryHTML(wi){
+  var km=0,rs=[],pr=weekProgress(wi),planned=weekKm(wi);
+  for(var i=0;i<7;i++){var d=addDays(START,wi*7+i);if(d>END)break;var lg=S.log[key(d)];if(!lg)continue;
+    Object.keys(lg).forEach(function(id){var o=lg[id],x=parseFloat(String(o.km||'').replace(',','.')),r=parseFloat(o.rpe);if(!isNaN(x))km+=x;if(!isNaN(r))rs.push(r);});}
+  var ar=rs.length?(rs.reduce(function(a,b){return a+b;},0)/rs.length).toFixed(1):'—';
+  return '<div class="card stack"><h3>סיכום שבוע '+(wi+1)+'</h3><div class="kpis"><div><b>'+pr[0]+'/'+pr[1]+'</b><span>אימונים שבוצעו</span></div><div><b>'+km.toFixed(1)+'</b><span>ק״מ בפועל מתוך '+planned+'</span></div><div><b>'+ar+'</b><span>RPE ממוצע</span></div></div></div>';
+}
+function tripBanner(){if(viewKey<2||viewKey>10)return '';return '<div class="banner info" style="margin-top:12px">בטיול בפיטסבורג: שעון ארה״ב המזרחית, 7 שעות אחרי ישראל. '+(viewKey<=5?'הימים הראשונים קלים בגלל ג׳ט לג, ובחוץ באור יום.':'')+'</div>';}
+function lastLoad(id,wi){for(var w=wi-1;w>=0;w--){var v=S.load[id]&&S.load[id][w];if(v!=null&&v!=='')return v;}return null;}
+function adj(sr,delta){return typeof sr==='string'?sr.replace(/^(\d+)×/,function(m,n){return Math.max(2,Number(n)+delta)+'×';}):sr;}
+function strCard(s,rd,c,dn,when,p){
+  var mf=modeFor(s.kind,rd,c),mode=mf.mode,txt='';
+  if(mode==='red')txt='<b>מחליפים:</b> '+(mf.msg||'20 דק׳ מוביליטי וליבה קלה, בלי משקל.');
+  else if(mode==='yellow')txt='<b>מקלים:</b> '+(mf.msg?mf.msg+' ':'')+'סט אחד פחות בכל תרגיל, RPE נקודה אחת פחות, בלי ווסט ובלי כשל.';
+  var ad=mode?'<div class="adapt z-'+mode+'">'+txt+'</div>':'';
+  var dim=mode==='red',wi=s.wi!=null?s.wi:p.wi;
+  var rows=s.ex.map(function(e){
+    var sr=e.t?e.t:(mode==='yellow'?adj(e.sr,-1):e.sr);
+    var rpe=mode==='yellow'?(e.rpe-1):e.rpe;
+    var ll=e.load?lastLoad(e.id,wi):null,cur=(S.load[e.id]&&S.load[e.id][wi]);
+    var ldh=e.load?'<label class="ld"><span>'+(e.unit||'ק״ג')+'</span><input type="number" inputmode="decimal" step="0.5" min="0" data-act="load" data-wk="'+wi+'" data-ex="'+e.id+'" value="'+(cur!=null?cur:'')+'" placeholder="—" aria-label="משקל '+e.n+'">'+(ll!=null?'<span class="hint">בשבוע שעבר: '+ll+'</span>':'')+'</label>':'';
+    return '<div class="ex"><div class="exh"><div class="exn">'+e.n+(e.ss?'<em>סופרסט '+e.ss+'</em>':'')+'</div><div class="exs">'+sr+'</div></div><div class="exm"><span class="pill rest">מנוחה '+e.rest+'</span><span class="pill">RPE '+rpe+'</span></div>'+(e.cue?'<div class="cue">'+e.cue+'</div>':'')+ldh+'</div>';
+  }).join('');
+  return '<section class="sess s"><div class="sh"><div class="ico">'+IC.s+'</div><div><div class="tag">'+s.tag+(s.light?' · קל':'')+'</div><h3 class="'+(dim?'struck':'')+'">'+s.title+'</h3></div><div class="when">'+when+(when?' · ':'')+'כ-'+s.min+' דק׳</div></div><div class="sb">'+ad+'<div class="prog">'+s.prog+'</div><div class="stack '+(dim?'struck':'')+'" style="gap:10px">'+rows+'</div>'+
+   whyHTML(whyOf(s,wi))+logHTML(s,key(dateOf(viewKey)),wi)+actRow(s,dn)+'</div></section>';
+}
+function mobCard(dn,it){
+  return '<section class="sess s"><div class="sh"><div class="ico">'+IC.rest+'</div><div><div class="tag">מוביליטי</div><h3>15 דקות פתיחה</h3></div><div class="when">15 דק׳</div></div><div class="sb"><ul class="steps"><li><span>ירכיים ופסואס: 2×45 שנ׳ לכל צד</span></li><li><span>שוק ואכילס: 2×45 שנ׳ לכל צד</span></li><li><span>עמוד שדרה חזי וכתפיים: 2×10 סיבובים</span></li><li><span>מעבר בין תרגילים: 15 שנ׳</span></li></ul>'+whyHTML(WHY.MOB)+actRow(it,dn)+'</div></section>';
+}
+function planHTML(){
+  var kms=[0,1,2,3].map(weekKm),maxH=44,capB=(40/maxH*100).toFixed(1);
+  var bars='<div class="bars"><div class="cap" style="bottom:calc('+capB+'% * 0.941)"><em>תקרה 40 ק״מ</em></div>'+kms.map(function(v,i){return '<div class="bar'+(i===weekSel?' cur':'')+'"><span>'+v+'</span><i style="height:'+(v/maxH*100).toFixed(1)+'%"></i></div>';}).join('')+'</div>'+
+   '<div class="blabels">'+WEEKS.map(function(w){return '<div>שבוע '+w.n+'<br>'+w.range+'</div>';}).join('')+'</div>';
+  var ld=S.longDay[weekSel]||'fri';
+  var ctl='<div class="card stack"><h3>הגדרות</h3><div class="field"><span>ימי ריצה בשבוע</span><button class="chip" data-act="runs" data-v="3" aria-pressed="'+(S.runs===3)+'">3</button><button class="chip" data-act="runs" data-v="4" aria-pressed="'+(S.runs===4)+'">4</button></div>'+
+   '<div class="field"><span>שבוע</span>'+WEEKS.map(function(w,i){return '<button class="chip" data-act="week" data-v="'+i+'" aria-pressed="'+(i===weekSel)+'">'+w.n+'</button>';}).join('')+'</div>'+
+   (weekSel<3?'<div class="field"><span>ריצה ארוכה בשבוע '+(weekSel+1)+' ביום</span><button class="chip" data-act="long" data-v="fri" aria-pressed="'+(ld==='fri')+'">שישי</button><button class="chip" data-act="long" data-v="sat" aria-pressed="'+(ld==='sat')+'">שבת</button></div><div class="small muted">ארוכה בשבת אומרת שהאיכות של ראשון תקבל הקלה אוטומטית.</div>':'<div class="small muted">בשבוע האחרון אין ריצה ארוכה.</div>')+'</div>';
+  var rows=WEEKS.map(function(w,i){
+    return '<div class="wrow"><b>שבוע '+w.n+' · '+w.name+' · '+w.range+'</b><span>איכות: '+QUAL[i].t+'</span><span class="muted">'+(i<3?'ארוכה '+LONGKM[i]+' ק״מ · ':'')+kms[i]+' ק״מ בסך הכול · כוח: '+w.focus+'</span></div>';}).join('');
+  return '<div class="stack"><h2 style="margin-top:6px">התוכנית</h2><div class="card"><h3 style="margin-bottom:8px">ק״מ בשבוע</h3>'+bars+'</div>'+summaryHTML(weekSel)+planCheckHTML()+ctl+'<div class="card"><h3>4 השבועות</h3>'+rows+'</div></div>';
+}
+function zonesHTML(){
+  var L=S.lthr,R=[[0,0.76],[0.76,0.865],[0.87,0.935],[0.94,1.005],[1.01,1.08]],COL=['#7F8CB8','#3FD7B5','#5E9BFF','#FFB627','#FF5C8A'];
+  var Z=[['Z1','התאוששות','6:00 ומעלה','הליכון והתאוששות'],['Z2','קל ואירובי','5:10–5:55','ריצות קלות, ארוכה, חימום'],['Z3','בינוני','4:40–5:05','לא בשימוש בתוכנית'],['Z4','סף','3:58–4:12','3×2000'],['Z5','VO2 וקצב 5K','3:38–3:52','1000-ים ו-800-ים']];
+  var lo=100,hi=195;
+  var rows=Z.map(function(z,i){var a=Math.round(R[i][0]*L),b=Math.round(R[i][1]*L),aa=i===0?lo:a;
+    var left=((aa-lo)/(hi-lo)*100).toFixed(1),w=((b-aa)/(hi-lo)*100).toFixed(1);
+    return '<div class="zrow" style="--zcol:'+COL[i]+'"><div class="zb">'+z[0]+'</div><div><div class="zmeta"><b>'+z[1]+'</b><span class="mono">'+(i===0?'עד '+b:a+'–'+b)+' דופק</span></div><div class="zt"><i style="left:'+left+'%;width:'+w+'%"></i></div><div class="zmeta small muted"><span>'+z[3]+'</span><span class="mono">'+z[2]+' לק״מ</span></div></div></div>';}).join('');
+  return '<div class="stack"><h2 style="margin-top:6px">קצבים ודופק</h2><div class="card"><div class="field" style="margin-bottom:6px"><label for="lthr">דופק סף</label><input id="lthr" type="number" inputmode="numeric" min="140" max="200" value="'+L+'"><span class="small muted">מגארמין: 171</span></div>'+rows+'<div class="small muted" style="margin-top:8px">סטרייד וחזרות קצרות: 3:20–3:30, הדופק לא רלוונטי.</div></div>'+
+   '<div class="card stack"><h3>איך משתמשים בזה</h3><ul class="steps" style="--c:var(--accent)"><li><span>בריצות קלות הדופק קובע. הריצות האחרונות שלך יצאו ב-127–136 בקצב 5:40–5:55.</span></li><li><span>באימוני איכות הקצב קובע, כי הדופק מתעכב 30–60 שניות בתחילת כל חזרה.</span></li><li><span>עד שרצועת הזרוע של קורוס תגיע, לא סומכים על דופק מהשעון בקצבים מהירים.</span></li></ul></div></div>';
+}
+function diagId(){var c=S.created?new Date(S.created):null;return 'storage: '+(location.protocol==='file:'?'file':location.host)+' | since '+(c?c.getDate()+'.'+(c.getMonth()+1)+' '+String(c.getHours()).padStart(2,'0')+':'+String(c.getMinutes()).padStart(2,'0'):'?');}
+function dbNote(){
+  if(dbState==='ok')return '<b style="color:var(--ok)">גיבוי בענן פעיל.</b> כל שינוי נשמר גם בשרת, ונגיש מכל מכשיר'+(dbAt?' (עודכן ב-'+String(new Date(dbAt).getHours()).padStart(2,'0')+':'+String(new Date(dbAt).getMinutes()).padStart(2,'0')+')':'')+'.';
+  if(dbState==='connecting')return 'מתחבר לגיבוי בענן...';
+  if(dbState==='err')return '<b style="color:var(--warn)">הגיבוי בענן לא זמין כרגע.</b> הנתונים נשמרים בטלפון, ויסונכרנו כשהחיבור יחזור.';
+  return 'גיבוי בענן אינו פעיל בגרסה הזו, והנתונים נשמרים רק בטלפון.';
+}
+function refreshDbNote(){var el=document.getElementById('dbnote');if(el)el.innerHTML=fb(dbNote());}
+function backupHTML(){
+  var nlog=0;Object.keys(S.log||{}).forEach(function(d){Object.keys(S.log[d]).forEach(function(id){if(hasData(S.log[d][id]))nlog++;});});
+  var ts=S.ts?new Date(S.ts):null,when=ts?ts.getDate()+'.'+(ts.getMonth()+1)+' ב-'+String(ts.getHours()).padStart(2,'0')+':'+String(ts.getMinutes()).padStart(2,'0'):'עוד לא נשמר';
+  return '<div class="card stack"><h3>שמירה וגיבוי</h3><div class="small" id="dbnote">'+dbNote()+'</div><div class="small muted">'+(storeOK?'הנתונים נשמרים אוטומטית בטלפון, בכל שינוי. נשמרו '+nlog+' אימונים עם תיעוד. שמירה אחרונה: '+when+'.':'<b style="color:var(--bad)">הדפדפן חוסם שמירה, ולכן הנתונים לא יישמרו אחרי סגירה.</b> פתח את האפליקציה מחוץ למצב פרטי.')+' הנתונים שייכים לכתובת שממנה פתחת: אפליקציית מסך הבית ודפדפן הם מקומות נפרדים, ולכן משתמשים רק במקום אחד.</div><div class="small muted" style="direction:ltr;text-align:start">'+diagId()+'</div><div class="small muted">אם הכנסת נתונים במקום אחר, למשל בדפדפן לפני שהוספת למסך הבית: שם לוחצים "העתק גיבוי" ושומרים את הטקסט, כאן מדביקים אותו ולוחצים "מזג גיבוי". הנתונים של שני המקומות יתאחדו.</div><div class="row"><button class="btn" data-act="bksh">שמור גיבוי (שיתוף להערות / קבצים)</button></div><div class="row"><button class="btn sec" data-act="bkdl">הורד קובץ</button><button class="btn sec" data-act="bkcp">העתק טקסט</button></div><textarea class="bk" id="bkbox" placeholder="כאן מדביקים גיבוי ממקום אחר" aria-label="תיבת גיבוי"></textarea><div class="row"><button class="btn sec" data-act="bkim">מזג גיבוי מהטקסט</button><label class="chip" style="cursor:pointer">מזג גיבוי מקובץ<input type="file" id="bkfile" accept=".json,application/json" style="display:none"></label></div><div class="small muted">כדאי לגבות פעם בשבוע ולפני שמעלים גרסה חדשה של האפליקציה.</div></div>';
+}
+function infoHTML(){
+  return '<div class="stack"><h2 style="margin-top:6px">מידע</h2><div class="card stack"><h3>נקודת מוצא מגארמין (7.11)</h3><div class="kpis"><div><b>58.4</b><span>VO2max</span></div><div><b>171</b><span>דופק סף</span></div><div><b>39:56</b><span>שיא 10K (2.11)</span></div><div><b>19:24</b><span>תחזית 5K</span></div><div><b>0.6</b><span>יחס עומס, רענון</span></div><div><b>~98</b><span>HRV שבועי, מאוזן</span></div></div><div class="small muted">הנתונים מתעדכנים לפי בקשה. אחרי ארבעה שבועות כדאי לבדוק שוב VO2max ושיא.</div></div>'+
+   '<div class="card stack"><h3>איך הצ׳ק-אין משנה את היום</h3><table><tbody><tr><td class="zlabel z-green">ירוק 75+</td><td>עושים את האימון כמתוכנן.</td></tr><tr><td class="zlabel z-yellow">צהוב 55–74</td><td>איכות: חזרה אחת פחות. ריצה קלה: 25% פחות. כוח: סט פחות ו-RPE נמוך בנקודה.</td></tr><tr><td class="zlabel z-red">אדום מתחת ל-55</td><td>איכות הופכת לריצה קלה או מנוחה. כוח הופך למוביליטי.</td></tr></tbody></table>'+
+   '<ul class="steps" style="--c:var(--accent)"><li><span>אלכוהול אתמול: מקסימום צהוב, ובשישי מוצעת הזזת הארוכה לשבת.</span></li><li><span>כאב נקודתי 4 ומעלה פוגע רק באימונים שקשורים לאזור שבחרת. 6 ומעלה: מדלגים עליהם.</span></li><li><span>כאב שרירים 7 ומעלה: רגליים ואתלטיקה מוחלפים.</span></li></ul></div>'+
+   '<div class="card stack"><h3>RPE בכוח</h3><table><tbody><tr><td class="mono">6</td><td>קל, 4 חזרות רזרבה</td></tr><tr><td class="mono">7</td><td>עובד, 3 חזרות רזרבה</td></tr><tr><td class="mono">8</td><td>קשה, 2 חזרות רזרבה</td></tr><tr><td class="mono">9</td><td>כמעט כשל, חזרה אחת רזרבה</td></tr></tbody></table><div class="small muted">רושמים את המשקל בכל תרגיל, והשבוע הבא מופיע מה הרמת. כשהחזרות נקיות ב-RPE הנכון, מוסיפים 1–2.5 ק״ג.</div></div>'+
+   '<div class="card stack"><h3>ניתוח אימונים</h3><div class="small muted">בכל כרטיס אימון יש "תיעוד וניתוח". בריצת איכות מזינים את הקצב והדופק של כל חזרה, בשאר האימונים נתונים כלליים, ואיך הרגשת. המאמן בוחן את הביצוע מול היעד, את הדופק, את המצב שלך באותו בוקר ואת היום שאחרי, ונותן המלצה. כל מה שהזנת נשמר ומופיע בלשונית "יומן". לניתוח עמוק יותר מ-Garmin, כתוב לי בצ׳אט "תנתח".</div></div>'+
+   backupHTML()+
+   '<div class="card stack"><h3>הטיול, 9–18.11</h3><ul class="steps" style="--c:var(--accent)"><li><span>9.11: ריצה קלה בבוקר ואתלטיקה אחר הצהריים, הטיסה בלילה</span></li><li><span>10.11: יום נסיעה, בלי אימון</span></li><li><span>11.11: ריצה קלה וגלגול רגליים בלבד</span></li><li><span>12.11: כוח עליון בחדר הכושר. 13.11: ארוכה. 15–17.11: לפי התוכנית, כולל כוח עליון ב-17.11</span></li><li><span>18.11: יום נסיעה. 19.11: ריצה קלה ורגליים בעומס מופחת</span></li></ul></div>'+
+   '<div class="card stack"><h3>מבנה השבוע</h3><ul class="steps" style="--c:var(--accent)"><li><span>ראשון: ריצת איכות בבוקר, פירמידת מתח בערב</span></li><li><span>שני: ריצה קלה בבוקר, אתלטיקה בערב</span></li><li><span>שלישי: פלג גוף עליון, כוח</span></li><li><span>רביעי: רגליים כבדות</span></li><li><span>חמישי: ריצה קלה קצרה עם סטרייד</span></li><li><span>שישי: ריצה ארוכה, או שבת אחרי אלכוהול</span></li><li><span>שבת: יוגה שבועית, 20–30 דקות</span></li></ul></div></div>';
+}
+
+/* ---------- events ---------- */
+document.addEventListener('click',function(e){
+  if(e.target&&e.target.id==='sheet'){mvS=null;drawSheet();return;}
+  var b=e.target.closest('[data-act]');if(!b)return;
+  var a=b.dataset.act,v=b.dataset.v,k=key(dateOf(viewKey));
+  if(a==='tab'){tab=v;render();window.scrollTo(0,0);return;}
+  if(a==='wk'){var wi=clamp(Math.floor(viewKey/7)+Number(v),0,3);viewKey=Math.min(LAST,wi*7+(viewKey%7));render();return;}
+  if(a==='goday'){viewKey=Number(v);render();return;}
+  if(a==='week'){weekSel=Number(v);render();return;}
+  if(a==='runs'){S.runs=Number(v);save();render();return;}
+  if(a==='long'){S.longDay[weekSel]=v;save();render();return;}
+  if(a==='lchip'){var sid=b.dataset.sid,f=b.dataset.f;S.log[k]=S.log[k]||{};var o=S.log[k][sid]=S.log[k][sid]||{};o[f]=(o[f]===v)?'':v;save();
+    b.parentNode.querySelectorAll('.chip').forEach(function(x){x.setAttribute('aria-pressed',String(x.dataset.v===o[f]));});
+    var p0=dayPlan(dateOf(viewKey)),it0=sessList(p0).filter(function(x){return x.id===sid;})[0],el0=document.getElementById('an-'+sid);
+    if(el0&&it0)el0.innerHTML=fb(analysisHTML(it0,k,it0.wi!=null?it0.wi:p0.wi));
+    var lh0=document.querySelector('details.log[data-lk="'+k+'|'+sid+'"] summary');if(lh0&&lh0.textContent.indexOf('נשמר')<0)lh0.firstChild.textContent='תיעוד וניתוח · נשמר';
+    refreshLast();return;}
+  if(a==='bksh'){var js=JSON.stringify(S),stamp=function(){S.lastBackup=Date.now();save();render();};
+    if(navigator.share){navigator.share({title:'גיבוי אימונים עד הגיוס',text:js}).then(function(){stamp();toast('הגיבוי נשמר');}).catch(function(){});}
+    else{try{navigator.clipboard.writeText(js).then(function(){stamp();toast('הגיבוי הועתק. הדבק אותו בהערות');}).catch(function(){toast('לא הצלחתי להעתיק. פתח מידע > שמירה וגיבוי');});}catch(e){toast('פתח מידע > שמירה וגיבוי');}}
+    return;}
+  if(a==='bkdl'){var fn='run-backup-'+key(new Date())+'.json';if(window.claude&&window.claude.use){window.claude.use('downloads').then(function(dl){if(!dl)throw 0;return dl.save({filename:fn,data:JSON.stringify(S)});}).then(function(){toast('הגיבוי נשמר');}).catch(function(e){toast('אפשר להשתמש ב"העתק גיבוי"');});return;}try{var blob=new Blob([JSON.stringify(S)],{type:'application/json'}),au=document.createElement('a');au.href=URL.createObjectURL(blob);au.download='run-backup-'+key(new Date())+'.json';document.body.appendChild(au);au.click();setTimeout(function(){document.body.removeChild(au);URL.revokeObjectURL(au.href);},500);toast('הגיבוי ירד לקובץ');}catch(e){toast('ההורדה נכשלה, השתמש בהעתקה');}return;}
+  if(a==='bkcp'){var bx=document.getElementById('bkbox');bx.value=JSON.stringify(S);bx.select();var okc=false;try{okc=document.execCommand('copy');}catch(e){}try{if(navigator.clipboard)navigator.clipboard.writeText(bx.value);okc=true;}catch(e){}if(okc){S.lastBackup=Date.now();save();}toast(okc?'הגיבוי הועתק. הדבק אותו בהערות או במייל לעצמך':'סימנתי את הטקסט. העתק אותו ידנית');return;}
+  if(a==='bkim'){var bx2=document.getElementById('bkbox');if(!bx2.value.trim()){toast('הדבק קודם גיבוי בתיבה');return;}if(!confirm('למזג את הגיבוי? מה שכבר באפליקציה נשמר, ומה שבגיבוי מתווסף אליו (נשמר עותק של המצב הנוכחי).'))return;toast(importData(bx2.value)?'הגיבוי מוזג':'הגיבוי לא תקין');return;}
+  if(a==='mv'){openMove(b.dataset.id,b.dataset.from);return;}
+  if(a==='mvclose'){mvS=null;drawSheet();return;}
+  if(a==='mvwk'){mvS.wk=Number(v);drawSheet();return;}
+  if(a==='mvstage'){mvS.stage=v;mvS.swap=null;drawSheet();return;}
+  if(a==='mvday'){mvS.to=v;mvS.swap=null;var pd=dayPlan(dateFromKey(v));mvS.stage=sessList(pd).length?'opt':'confirm';drawSheet();return;}
+  if(a==='mvopt'){mvS.swap=(v==='add')?null:v;mvS.stage='confirm';drawSheet();return;}
+  if(a==='mvok'){var mp=movePlan(mvS);if(mp){S.place=mp.np;mp.ops.forEach(function(o){migrate(o[0],o[1],o[2]);});var tt=titleOfIt(mp.it);save();mvS=null;drawSheet();render();toast('הועבר: '+tt);}return;}
+  if(a==='mvback'){var key0=b.dataset.from+':'+b.dataset.id,cur0=key(dateOf(viewKey));if(S.place&&S.place[key0]){delete S.place[key0];migrate(b.dataset.id,cur0,b.dataset.from);save();render();toast('האימון חזר למקומו');}return;}
+  if(a==='movelong'){var w2=clamp(Math.floor(viewKey/7),0,3);S.longDay[w2]='sat';save();render();return;}
+  if(a==='alc'){var c=getCI(k);S.ci[k]=Object.assign(c,{alc:!c.alc});save();b.setAttribute('aria-pressed',String(S.ci[k].alc));dyn();return;}
+  if(a==='pw'){var c2=getCI(k);S.ci[k]=Object.assign(c2,{pw:c2.pw===v?'':v});save();document.querySelectorAll('#pw .chip').forEach(function(x){x.setAttribute('aria-pressed',String(x.dataset.v===S.ci[k].pw));});dyn();return;}
+});
+document.addEventListener('change',function(e){
+  var t=e.target;
+  if(t.dataset&&t.dataset.act==='done'){var k=key(dateOf(viewKey));S.done[k]=S.done[k]||{};S.done[k][t.dataset.v]=t.checked;save();var hs=document.querySelector('.hstats');if(hs){var wi=clamp(Math.floor(viewKey/7),0,3),pr=weekProgress(wi);hs.children[1].firstChild.textContent=pr[0]+'/'+pr[1];}render0();return;}
+  if(t.dataset&&t.dataset.act==='load'){var wk=Number(t.dataset.wk),id=t.dataset.ex;S.load[id]=S.load[id]||{};S.load[id][wk]=t.value===''?null:Number(t.value);save();return;}
+  if(t.id==='bkfile'&&t.files&&t.files[0]){var fr=new FileReader();fr.onload=function(){if(confirm('למזג את הקובץ? מה שכבר באפליקציה נשמר, ומה שבקובץ מתווסף אליו (נשמר עותק של המצב הנוכחי).'))toast(importData(String(fr.result))?'הגיבוי מוזג':'הקובץ לא תקין');};fr.readAsText(t.files[0]);return;}
+  if(t.id==='lthr'){var v=Number(t.value);if(v>=140&&v<=200){S.lthr=Math.round(v);save();render();}return;}
+});
+function deepMerge(a,b){
+  var r=Object.assign({},a);
+  Object.keys(b).forEach(function(k){var x=b[k],y=r[k];
+    if(x&&typeof x==='object'&&!Array.isArray(x))r[k]=deepMerge(y&&typeof y==='object'?y:{},x);
+    else if(x!==''&&x!=null)r[k]=x;else if(!(k in r))r[k]=x;});
+  return r;
+}
+function importData(txt){
+  try{var o=JSON.parse(txt);if(!o||typeof o!=='object'||Array.isArray(o))return false;
+    var okk=['ci','done','load','log','place'].some(function(f){return o[f]&&typeof o[f]==='object';});if(!okk)return false;
+    try{localStorage.setItem(STORE+'-prev',JSON.stringify(S));}catch(e){}
+    ['ci','done','load','log','longDay','place'].forEach(function(f){var a=S[f]&&typeof S[f]==='object'?S[f]:{},b=o[f]&&typeof o[f]==='object'&&!Array.isArray(o[f])?o[f]:{};S[f]=deepMerge(a,b);});
+    if(o.runs===3||o.runs===4)S.runs=o.runs;if(o.lthr>=140&&o.lthr<=200)S.lthr=Math.round(o.lthr);
+    if(o.created&&(!S.created||o.created<S.created))S.created=o.created;
+    save();render();return true;}catch(e){return false;}
+}
+function render0(){var st=document.querySelector('.strip');if(st&&tab==='today'){var tmp=document.createElement('div');tmp.innerHTML=stripHTML();var n=tmp.querySelector('.strip');if(n)st.replaceWith(n);}}
+document.addEventListener('input',function(e){
+  var t=e.target;if(!t.dataset||!t.dataset.k)return;
+  var k=key(dateOf(viewKey)),c=getCI(k),id=t.dataset.k,v=Number(t.value);
+  c[id]=v;S.ci[k]=c;save();
+  t.style.setProperty('--pct',pctOf(t));
+  var o=document.getElementById('o-'+id);if(o)o.textContent=v+(id==='sl'?' ש׳':'');
+  if(id==='p'){var pw=document.getElementById('pw');if(pw)pw.style.display=v>0?'':'none';}
+  dyn();
+});
+document.addEventListener('input',function(e){
+  var t=e.target;if(!t.dataset||!t.dataset.log)return;
+  var k=key(dateOf(viewKey)),sid=t.dataset.sid;
+  S.log[k]=S.log[k]||{};var o=S.log[k][sid]=S.log[k][sid]||{};o[t.dataset.log]=t.value;save();
+  var p=dayPlan(dateOf(viewKey)),it=sessList(p).filter(function(x){return x.id===sid;})[0],el=document.getElementById('an-'+sid);
+  if(el&&it)el.innerHTML=fb(analysisHTML(it,k,it.wi!=null?it.wi:p.wi));
+  var lh=document.querySelector('details.log[data-lk="'+k+'|'+sid+'"] summary');if(lh&&lh.textContent.indexOf('נשמר')<0)lh.firstChild.textContent='תיעוד וניתוח · נשמר';
+  refreshLast();
+});
+function refreshLast(){var el=document.querySelector('.lastw');if(!el&&tab!=='today')return;var tmp=document.createElement('div');tmp.innerHTML=fb(lastCardHTML());var nw=tmp.firstChild;if(el&&nw){var op=el.open;el.replaceWith(nw);if(op)nw.open=true;}else if(el&&!nw)el.remove();else if(!el&&nw){var st=document.querySelector('.strip');if(st)st.insertAdjacentElement('afterend',nw);}}
+document.addEventListener('toggle',function(e){var d=e.target;if(d&&d.classList&&d.classList.contains('log')){openLogs[d.dataset.lk]=d.open;}},true);
+var lastToday=todayKey();
+try{localStorage.setItem('enl-probe','1');localStorage.removeItem('enl-probe');}catch(e){storeOK=false;}
+idbRestore();
+dbInit();
+document.addEventListener('visibilitychange',function(){if(document.hidden&&DBREF){clearTimeout(dbT);dbFlush();}});
+function tick(){var tk=todayKey();if(tk!==lastToday){var follow=(viewKey===lastToday);lastToday=tk;if(follow){viewKey=tk;weekSel=clamp(Math.floor(tk/7),0,3);}render();}}
+setInterval(tick,30000);
+document.addEventListener('visibilitychange',function(){if(!document.hidden)tick();});
+window.addEventListener('focus',tick);window.addEventListener('pageshow',tick);
+render();
+})();
+</script>
+</body>
+</html>
